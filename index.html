@@ -14,10 +14,10 @@
             <div class="logo">
                 <div class="logo-glow"></div>
                 <h1>MEI<span>FISCAL</span></h1>
-                <p class="subtitle">Assistente Inteligente para Declaração Anual</p>
+                <p class="subtitle">Simulador Fiscal Completo - MEI & IRPF</p>
             </div>
             <div class="year-badge">
-                <span id="current-year">2024</span>
+                <span id="current-year">2026</span>
             </div>
         </header>
 
@@ -30,6 +30,7 @@
                 <li><button class="nav-btn" data-section="revenue">💰 Receitas</button></li>
                 <li><button class="nav-btn" data-section="expenses">📉 Despesas</button></li>
                 <li><button class="nav-btn" data-section="assets">🏠 Bens</button></li>
+                <li><button class="nav-btn" data-section="simulation">🧮 Simulação IR</button></li>
                 <li><button class="nav-btn" data-section="validation">✅ Validação</button></li>
                 <li><button class="nav-btn" data-section="report">📊 Relatório</button></li>
                 <li><button class="nav-btn" data-section="export">📤 Exportar</button></li>
@@ -41,18 +42,18 @@
             <section class="section active" id="home-section">
                 <div class="section-header">
                     <h2>Assistente Fiscal MEI</h2>
-                    <p class="section-subtitle">Organize seus dados para a Declaração Anual do Simples Nacional</p>
+                    <p class="section-subtitle">Simulação completa de impostos para Microempreendedor Individual</p>
                 </div>
                 <div class="dashboard">
                     <div class="dashboard-card glow">
                         <div class="card-icon">⚡</div>
-                        <h3>Início Rápido</h3>
-                        <p>Comece preenchendo sua identificação. O sistema salva automaticamente.</p>
-                        <button class="btn-primary" data-section="identification">Começar Agora</button>
+                        <h3>Simulação IR</h3>
+                        <p>Calcule impostos sobre renda e entenda sua situação fiscal.</p>
+                        <button class="btn-primary" data-section="simulation">Simular Agora</button>
                     </div>
                     <div class="dashboard-card glow">
                         <div class="card-icon">📁</div>
-                        <h3>Dados Salvos</h3>
+                        <h3>Progresso</h3>
                         <p><span id="saved-progress">0%</span> do formulário preenchido</p>
                         <div class="progress-bar">
                             <div class="progress-fill"></div>
@@ -61,18 +62,19 @@
                     <div class="dashboard-card glow">
                         <div class="card-icon">🔒</div>
                         <h3>100% Offline</h3>
-                        <p>Todos os dados ficam armazenados apenas no seu navegador.</p>
+                        <p>Dados armazenados localmente. Zero transmissão.</p>
                     </div>
                 </div>
                 <div class="instructions">
-                    <h3>Como usar:</h3>
-                    <ol>
-                        <li>Preencha todas as seções na ordem sugerida</li>
-                        <li>Ative "Mesmo endereço" se sua residência é o local fiscal</li>
-                        <li>Adicione todas receitas e despesas do ano fiscal</li>
-                        <li>Valide os alertas fiscais antes de gerar o relatório</li>
-                        <li>Exporte o PDF para consulta com seu contador</li>
-                    </ol>
+                    <h3>📋 Funcionalidades do Sistema:</h3>
+                    <ul>
+                        <li><strong>Simulação IRPF para MEI</strong> - Cálculo de impostos sobre renda</li>
+                        <li><strong>Organização Fiscal Completa</strong> - Todos os dados para declaração</li>
+                        <li><strong>Separação PF/PJ</strong> - Identificação clara dos regimes</li>
+                        <li><strong>Limites do MEI</strong> - Alertas de faturamento e despesas</li>
+                        <li><strong>Relatório Profissional</strong> - Documento pronto para contador</li>
+                        <li><strong>Simulação "E se"</strong> - Teste diferentes cenários fiscais</li>
+                    </ul>
                 </div>
             </section>
 
@@ -117,6 +119,10 @@
                         <input type="date" id="data-abertura" class="form-input">
                     </div>
                 </div>
+                <div class="info-card">
+                    <h4>💡 Informação Importante</h4>
+                    <p>Como MEI, você é isento de IRPJ (Imposto de Renda Pessoa Jurídica), mas precisa declarar como Pessoa Física (IRPF) se ultrapassar os limites de isenção.</p>
+                </div>
                 <div class="form-actions">
                     <button class="btn-secondary" data-section="home">Voltar</button>
                     <button class="btn-primary" data-section="address">Próximo: Endereço</button>
@@ -139,7 +145,7 @@
 
                 <div class="address-columns">
                     <div class="address-column">
-                        <h3 class="address-title">🏠 Endereço Residencial</h3>
+                        <h3 class="address-title">🏠 Endereço Residencial (PF)</h3>
                         <div class="form-group">
                             <label for="res-cep">CEP</label>
                             <input type="text" id="res-cep" class="form-input" placeholder="00000-000" maxlength="9">
@@ -173,7 +179,7 @@
                     </div>
 
                     <div class="address-column">
-                        <h3 class="address-title">🏢 Endereço Fiscal</h3>
+                        <h3 class="address-title">🏢 Endereço Fiscal (PJ)</h3>
                         <div class="form-group">
                             <label for="fis-cep">CEP</label>
                             <input type="text" id="fis-cep" class="form-input" placeholder="00000-000" maxlength="9" disabled>
@@ -207,6 +213,11 @@
                     </div>
                 </div>
 
+                <div class="info-card">
+                    <h4>📍 Separação PF/PJ</h4>
+                    <p>O sistema diferencia claramente entre Pessoa Física (residencial) e Pessoa Jurídica (fiscal), essencial para a declaração correta do IRPF.</p>
+                </div>
+
                 <div class="form-actions">
                     <button class="btn-secondary" data-section="identification">Voltar</button>
                     <button class="btn-primary" data-section="activity">Próximo: Atividade</button>
@@ -231,9 +242,25 @@
                 </div>
 
                 <div class="info-card">
-                    <h4>📋 Informações Importantes</h4>
-                    <p>O MEI pode ter apenas uma atividade principal. Atividades secundárias devem ser compatíveis com a principal.</p>
-                    <p>Limite anual de faturamento: R$ 81.000,00 (2024).</p>
+                    <h4>📋 Regras do MEI 2026</h4>
+                    <div class="rules-grid">
+                        <div class="rule-item">
+                            <strong>Limite de Faturamento</strong>
+                            <p>R$ 81.000,00/ano</p>
+                        </div>
+                        <div class="rule-item">
+                            <strong>Alíquota DAS</strong>
+                            <p>5% a 6% (varia por atividade)</p>
+                        </div>
+                        <div class="rule-item">
+                            <strong>Isenção IRPJ</strong>
+                            <p>Total (como PJ)</p>
+                        </div>
+                        <div class="rule-item">
+                            <strong>IRPF</strong>
+                            <p>Declara se ultrapassar R$ 28.559,70/ano</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-actions">
@@ -254,8 +281,12 @@
                         <p class="summary-value" id="total-revenue">R$ 0,00</p>
                     </div>
                     <div class="summary-card">
-                        <h4>Quantidade de Lançamentos</h4>
+                        <h4>Quantidade</h4>
                         <p class="summary-value" id="revenue-count">0</p>
+                    </div>
+                    <div class="summary-card">
+                        <h4>Média Mensal</h4>
+                        <p class="summary-value" id="monthly-average">R$ 0,00</p>
                     </div>
                 </div>
 
@@ -321,6 +352,10 @@
                     <div class="summary-card">
                         <h4>Por Categoria</h4>
                         <p class="summary-value" id="expenses-by-category">-</p>
+                    </div>
+                    <div class="summary-card">
+                        <h4>Lucro Estimado</h4>
+                        <p class="summary-value" id="estimated-profit">R$ 0,00</p>
                     </div>
                 </div>
 
@@ -392,6 +427,10 @@
                         <h4>Bens Profissionais</h4>
                         <p class="summary-value" id="professional-assets">0 itens</p>
                     </div>
+                    <div class="summary-card">
+                        <h4>Bens Pessoais</h4>
+                        <p class="summary-value" id="personal-assets">0 itens</p>
+                    </div>
                 </div>
 
                 <div class="dynamic-form">
@@ -437,32 +476,157 @@
 
                 <div class="form-actions">
                     <button class="btn-secondary" data-section="expenses">Voltar</button>
+                    <button class="btn-primary" data-section="simulation">Próximo: Simulação IR</button>
+                </div>
+            </section>
+
+            <section class="section" id="simulation-section">
+                <div class="section-header">
+                    <h2>Simulação de Imposto de Renda</h2>
+                    <p class="section-subtitle">Cálculo de IRPF para Microempreendedor Individual</p>
+                </div>
+
+                <div class="simulation-controls">
+                    <button class="btn-secondary" id="run-simulation">🔄 Recalcular Simulação</button>
+                    <button class="btn-secondary" id="what-if-btn">🎯 Cenário "E Se"</button>
+                </div>
+
+                <div class="simulation-results">
+                    <div class="simulation-card highlight">
+                        <h3>📊 Resumo Fiscal</h3>
+                        <div class="simulation-grid">
+                            <div class="sim-item">
+                                <span class="sim-label">Receita Bruta Anual:</span>
+                                <span class="sim-value" id="sim-revenue">R$ 0,00</span>
+                            </div>
+                            <div class="sim-item">
+                                <span class="sim-label">Despesas Dedutíveis:</span>
+                                <span class="sim-value" id="sim-expenses">R$ 0,00</span>
+                            </div>
+                            <div class="sim-item">
+                                <span class="sim-label">Renda Tributável:</span>
+                                <span class="sim-value" id="sim-taxable-income">R$ 0,00</span>
+                            </div>
+                            <div class="sim-item">
+                                <span class="sim-label">Dedução Padrão:</span>
+                                <span class="sim-value" id="sim-standard-deduction">R$ 2.275,08</span>
+                            </div>
+                            <div class="sim-item total">
+                                <span class="sim-label">Base de Cálculo IRPF:</span>
+                                <span class="sim-value" id="sim-tax-base">R$ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="simulation-card">
+                        <h3>📈 Faixas do IRPF 2026</h3>
+                        <div class="tax-brackets">
+                            <div class="bracket">
+                                <span class="bracket-range">Até R$ 22.847,76</span>
+                                <span class="bracket-rate">Isento</span>
+                                <span class="bracket-value" id="bracket-0">R$ 0,00</span>
+                            </div>
+                            <div class="bracket">
+                                <span class="bracket-range">R$ 22.847,77 a R$ 33.919,80</span>
+                                <span class="bracket-rate">7,5%</span>
+                                <span class="bracket-value" id="bracket-1">R$ 0,00</span>
+                            </div>
+                            <div class="bracket">
+                                <span class="bracket-range">R$ 33.919,81 a R$ 45.012,60</span>
+                                <span class="bracket-rate">15%</span>
+                                <span class="bracket-value" id="bracket-2">R$ 0,00</span>
+                            </div>
+                            <div class="bracket">
+                                <span class="bracket-range">R$ 45.012,61 a R$ 55.976,16</span>
+                                <span class="bracket-rate">22,5%</span>
+                                <span class="bracket-value" id="bracket-3">R$ 0,00</span>
+                            </div>
+                            <div class="bracket">
+                                <span class="bracket-range">Acima de R$ 55.976,16</span>
+                                <span class="bracket-rate">27,5%</span>
+                                <span class="bracket-value" id="bracket-4">R$ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="simulation-card result">
+                        <h3>💰 Resultado da Simulação</h3>
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <span class="result-label">Imposto Devido:</span>
+                                <span class="result-value" id="sim-tax-due">R$ 0,00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Alíquota Efetiva:</span>
+                                <span class="result-value" id="sim-effective-rate">0%</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Situação Fiscal:</span>
+                                <span class="result-value" id="sim-tax-status">Não tributável</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Declaração IRPF:</span>
+                                <span class="result-value" id="sim-declaration">Não obrigatória</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="what-if-scenario" id="what-if-panel" style="display: none;">
+                    <h3>🎯 Cenário "E Se"</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="what-if-revenue">Receita Adicional (R$)</label>
+                            <input type="number" id="what-if-revenue" class="form-input" value="0" step="1000">
+                        </div>
+                        <div class="form-group">
+                            <label for="what-if-expenses">Despesas Adicionais (R$)</label>
+                            <input type="number" id="what-if-expenses" class="form-input" value="0" step="1000">
+                        </div>
+                    </div>
+                    <button class="btn-primary" id="apply-what-if">Aplicar Cenário</button>
+                    <button class="btn-secondary" id="reset-what-if">Voltar ao Real</button>
+                </div>
+
+                <div class="simulation-notes">
+                    <h4>📝 Notas da Simulação</h4>
+                    <ul>
+                        <li>O MEI é <strong>isento de IRPJ</strong> (Imposto de Renda Pessoa Jurídica)</li>
+                        <li>O IRPF é devido apenas sobre <strong>renda tributável acima de R$ 28.559,70/ano</strong></li>
+                        <li>Dedução padrão anual de R$ 2.275,08 já aplicada</li>
+                        <li>Considere deduções com dependentes, saúde, educação, etc.</li>
+                        <li>Esta simulação <strong>não substitui</strong> consulta com contador</li>
+                    </ul>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn-secondary" data-section="assets">Voltar</button>
                     <button class="btn-primary" data-section="validation">Próximo: Validação</button>
                 </div>
             </section>
 
             <section class="section" id="validation-section">
                 <div class="section-header">
-                    <h2>Validação Fiscal</h2>
-                    <p class="section-subtitle">Verificação de consistência dos dados</p>
+                    <h2>Validação Fiscal Inteligente</h2>
+                    <p class="section-subtitle">Verificação de conformidade e alertas</p>
                 </div>
 
                 <div class="validation-container">
                     <div class="validation-card" id="validation-revenue-limit">
-                        <div class="validation-icon">⚠️</div>
+                        <div class="validation-icon">💰</div>
                         <div class="validation-content">
-                            <h4>Limite de Faturamento MEI</h4>
+                            <h4>Limite MEI</h4>
                             <p class="validation-status">Verificando...</p>
-                            <p class="validation-detail">Limite anual: R$ 81.000,00</p>
+                            <p class="validation-detail">Faturamento máximo: R$ 81.000,00/ano</p>
                         </div>
                     </div>
 
-                    <div class="validation-card" id="validation-required-fields">
-                        <div class="validation-icon">📋</div>
+                    <div class="validation-card" id="validation-irpf">
+                        <div class="validation-icon">📊</div>
                         <div class="validation-content">
-                            <h4>Campos Obrigatórios</h4>
+                            <h4>IRPF</h4>
                             <p class="validation-status">Verificando...</p>
-                            <p class="validation-detail">Todos os campos devem ser preenchidos</p>
+                            <p class="validation-detail">Isenção: até R$ 28.559,70/ano</p>
                         </div>
                     </div>
 
@@ -471,92 +635,101 @@
                         <div class="validation-content">
                             <h4>Endereços</h4>
                             <p class="validation-status">Verificando...</p>
-                            <p class="validation-detail">Consistência entre residencial e fiscal</p>
+                            <p class="validation-detail">Separação PF/PJ</p>
                         </div>
                     </div>
 
-                    <div class="validation-card" id="validation-transactions">
-                        <div class="validation-icon">💼</div>
+                    <div class="validation-card" id="validation-documents">
+                        <div class="validation-icon">📋</div>
                         <div class="validation-content">
-                            <h4>Movimentações</h4>
+                            <h4>Documentos</h4>
                             <p class="validation-status">Verificando...</p>
-                            <p class="validation-detail">Receitas e despesas informadas</p>
+                            <p class="validation-detail">CPF e CNPJ válidos</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="validation-results">
-                    <h3>Resumo da Validação</h3>
+                    <h3>📋 Resumo da Conformidade</h3>
                     <div class="results-list" id="validation-results-list">
                         <!-- Resultados serão inseridos aqui -->
                     </div>
                 </div>
 
+                <div class="validation-alerts">
+                    <h3>⚠️ Alertas Fiscais</h3>
+                    <div class="alerts-list" id="validation-alerts-list">
+                        <!-- Alertas serão inseridos aqui -->
+                    </div>
+                </div>
+
                 <div class="form-actions">
-                    <button class="btn-secondary" data-section="assets">Voltar</button>
-                    <button class="btn-primary" data-section="report">Ver Relatório</button>
+                    <button class="btn-secondary" data-section="simulation">Voltar</button>
+                    <button class="btn-primary" data-section="report">Ver Relatório Completo</button>
                 </div>
             </section>
 
-<section class="section" id="report-section">
-    <div class="section-header">
-        <h2>Relatório Fiscal</h2>
-        <p class="section-subtitle">Pré-visualização do documento para exportação</p>
-        <div class="report-controls">
-            <button class="btn-secondary" onclick="window.print()" id="print-btn">
-                🖨️ Imprimir/PDF
-            </button>
-            <button class="btn-secondary" id="fullscreen-btn">
-                📱 Tela Cheia
-            </button>
-        </div>
-    </div>
+            <section class="section" id="report-section">
+                <div class="section-header">
+                    <h2>Relatório Fiscal Completo</h2>
+                    <p class="section-subtitle">Documento profissional para consulta contábil</p>
+                    <div class="report-controls">
+                        <button class="btn-secondary" onclick="window.print()" id="print-btn">
+                            🖨️ Imprimir/PDF
+                        </button>
+                        <button class="btn-secondary" id="fullscreen-btn">
+                            📱 Tela Cheia
+                        </button>
+                    </div>
+                </div>
 
-    <div class="report-container">
-        <div class="report-preview" id="report-preview">
-            <!-- Relatório será gerado aqui -->
-        </div>
-    </div>
+                <div class="report-container">
+                    <div class="report-preview" id="report-preview">
+                        <!-- Relatório será gerado aqui -->
+                    </div>
+                </div>
 
-    <div class="form-actions">
-        <button class="btn-secondary" data-section="validation">Voltar</button>
-        <button class="btn-primary" data-section="export">Exportar</button>
-    </div>
-</section>
+                <div class="form-actions">
+                    <button class="btn-secondary" data-section="validation">Voltar</button>
+                    <button class="btn-primary" data-section="export">Exportar</button>
+                </div>
+            </section>
 
             <section class="section" id="export-section">
                 <div class="section-header">
-                    <h2>Exportação</h2>
-                    <p class="section-subtitle">Finalize e exporte seu relatório</p>
+                    <h2>Exportação de Dados</h2>
+                    <p class="section-subtitle">Finalize e exporte seu relatório fiscal</p>
                 </div>
 
                 <div class="export-options">
                     <div class="export-card">
                         <div class="export-icon">📄</div>
-                        <h3>PDF para Impressão</h3>
-                        <p>Gere um documento profissional para consulta com seu contador.</p>
+                        <h3>PDF Profissional</h3>
+                        <p>Relatório completo com simulação IR para seu contador.</p>
                         <button class="btn-primary" id="export-pdf">Gerar PDF</button>
                     </div>
 
                     <div class="export-card">
-                        <div class="export-icon">💾</div>
-                        <h3>Backup dos Dados</h3>
-                        <p>Salve seus dados localmente para continuar depois.</p>
-                        <button class="btn-secondary" id="backup-data">Fazer Backup</button>
+                        <div class="export-icon">📊</div>
+                        <h3>Dados da Simulação</h3>
+                        <p>Exporte os cálculos de impostos em JSON.</p>
+                        <button class="btn-secondary" id="export-simulation">Exportar JSON</button>
                     </div>
 
                     <div class="export-card">
-                        <div class="export-icon">🔄</div>
-                        <h3>Novo Relatório</h3>
-                        <p>Limpar todos os dados e começar um novo relatório.</p>
-                        <button class="btn-warning" id="clear-data">Limpar Tudo</button>
+                        <div class="export-icon">💾</div>
+                        <h3>Backup Completo</h3>
+                        <p>Salve todos os dados para continuar depois.</p>
+                        <button class="btn-secondary" id="backup-data">Fazer Backup</button>
                     </div>
                 </div>
 
                 <div class="final-notes">
-                    <h4>⚠️ Importante</h4>
-                    <p>Este sistema é um organizador fiscal e não substitui a declaração oficial na Receita Federal.</p>
-                    <p>Consulte sempre um contador profissional antes de enviar qualquer declaração.</p>
+                    <h4>⚖️ Declaração de Conformidade</h4>
+                    <p>Este sistema é um <strong>simulador e organizador fiscal</strong> para Microempreendedores Individuais.</p>
+                    <p>As simulações de IRPF são baseadas na legislação vigente para 2026.</p>
+                    <p><strong>Não substitui</strong> a declaração oficial nem o trabalho de um contador qualificado.</p>
+                    <p>Consulte sempre um profissional antes de tomar decisões fiscais.</p>
                 </div>
 
                 <div class="form-actions">
@@ -566,24 +739,23 @@
             </section>
         </main>
 
-        <<footer class="footer">
-    <div class="footer-content">
-        <div class="footer-info">
-            <p><strong>S&Q TECNOLOGIA DA INFORMACAO LTDA</strong></p>
-            <p>CNPJ: 64.684.955/0001-98 | ME</p>
-            <p>Rua Pais Leme, 215 - Conj. 1713 - Pinheiros - São Paulo/SP</p>
-            <p>CEP: 05.424-150 | Tel: (71) 9 8260-7352</p>
-        </div>
-        <div class="footer-legal">
-            <p>© 2026 Assistente Fiscal MEI - Organizador Pré-Declaração</p>
-            <p class="footer-note">Todos os dados são armazenados apenas no seu navegador. Nenhuma informação é transmitida para servidores externos.</p>
-            <p class="footer-disclaimer">Sistema de apoio fiscal não oficial. Consulte sempre um contador profissional.</p>
-        </div>
-    </div>
-</footer>
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p><strong>S&Q TECNOLOGIA DA INFORMACAO LTDA</strong></p>
+                    <p>CNPJ: 64.684.955/0001-98 | ME</p>
+                    <p>Rua Pais Leme, 215 - Conj. 1713 - Pinheiros - São Paulo/SP</p>
+                    <p>CEP: 05.424-150 | Tel: (71) 98260-7352</p>
+                </div>
+                <div class="footer-legal">
+                    <p>© 2026 Assistente Fiscal MEI - Simulador Completo de Impostos</p>
+                    <p class="footer-note">Sistema 100% offline. Dados armazenados apenas localmente.</p>
+                    <p class="footer-disclaimer">Simulador fiscal para fins educacionais. Consulte um contador.</p>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <script src="script.js"></script>
 </body>
-
 </html>
