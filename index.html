@@ -498,21 +498,31 @@
                 </div>
             </section>
 
-            <section class="section" id="report-section">
-                <div class="section-header">
-                    <h2>Relatório Fiscal</h2>
-                    <p class="section-subtitle">Pré-visualização do documento para exportação</p>
-                </div>
+<section class="section" id="report-section">
+    <div class="section-header">
+        <h2>Relatório Fiscal</h2>
+        <p class="section-subtitle">Pré-visualização do documento para exportação</p>
+        <div class="report-controls">
+            <button class="btn-secondary" onclick="window.print()" id="print-btn">
+                🖨️ Imprimir/PDF
+            </button>
+            <button class="btn-secondary" id="fullscreen-btn">
+                📱 Tela Cheia
+            </button>
+        </div>
+    </div>
 
-                <div class="report-preview" id="report-preview">
-                    <!-- Relatório será gerado aqui -->
-                </div>
+    <div class="report-container">
+        <div class="report-preview" id="report-preview">
+            <!-- Relatório será gerado aqui -->
+        </div>
+    </div>
 
-                <div class="form-actions">
-                    <button class="btn-secondary" data-section="validation">Voltar</button>
-                    <button class="btn-primary" data-section="export">Exportar PDF</button>
-                </div>
-            </section>
+    <div class="form-actions">
+        <button class="btn-secondary" data-section="validation">Voltar</button>
+        <button class="btn-primary" data-section="export">Exportar</button>
+    </div>
+</section>
 
             <section class="section" id="export-section">
                 <div class="section-header">
@@ -562,7 +572,7 @@
             <p><strong>S&Q TECNOLOGIA DA INFORMACAO LTDA</strong></p>
             <p>CNPJ: 64.684.955/0001-98 | ME</p>
             <p>Rua Pais Leme, 215 - Conj. 1713 - Pinheiros - São Paulo/SP</p>
-            <p>CEP: 05.424-150 | Tel: (41) 9788-0145</p>
+            <p>CEP: 05.424-150 | Tel: (71) 9 8260-7352</p>
         </div>
         <div class="footer-legal">
             <p>© 2026 Assistente Fiscal MEI - Organizador Pré-Declaração</p>
@@ -575,4 +585,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
