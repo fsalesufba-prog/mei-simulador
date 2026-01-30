@@ -853,4 +853,305 @@ input:checked + .toggle-slider::before {
     .footer-content {
         display: none;
     }
+
+}
+
+/* Adicione/atualize no style.css */
+
+/* Melhorias de Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px 5px;
+    }
+    
+    .section {
+        padding: 20px 15px;
+        margin-bottom: 20px;
+    }
+    
+    .section-header {
+        margin-bottom: 25px;
+    }
+    
+    .section-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .dashboard {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .address-columns {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+    
+    .list-header {
+        display: none;
+    }
+    
+    .list-item {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 15px 10px;
+        position: relative;
+    }
+    
+    .list-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 10px;
+        right: 10px;
+        height: 1px;
+        background: var(--border);
+    }
+    
+    .list-item span {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .list-item span::before {
+        content: attr(data-label);
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-right: 10px;
+        min-width: 100px;
+    }
+    
+    .validation-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .validation-card {
+        padding: 20px;
+    }
+    
+    .financial-summary {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .summary-item {
+        margin: 0 !important;
+    }
+    
+    .export-options {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+/* Report Container para Mobile */
+.report-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: white;
+    margin-bottom: 20px;
+}
+
+.report-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.report-controls button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+}
+
+.report-preview {
+    overflow-x: auto;
+    padding: 20px;
+    min-height: 500px;
+    max-height: 70vh;
+    background: white;
+}
+
+/* Estilos específicos para o relatório dentro do preview */
+.report-preview .report-content {
+    min-width: 800px;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px;
+    color: #333;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.report-preview .report-content h1 {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 10px;
+    color: #222;
+}
+
+.report-preview .report-content h2 {
+    font-size: 18px;
+    margin: 25px 0 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #00d4ff;
+    color: #333;
+}
+
+.report-preview .report-content h3 {
+    font-size: 16px;
+    margin: 20px 0 10px;
+    color: #555;
+}
+
+/* Tabelas responsivas no relatório */
+@media (max-width: 768px) {
+    .report-preview {
+        padding: 10px;
+        min-height: 400px;
+    }
+    
+    .report-preview .report-content {
+        min-width: 100%;
+        padding: 20px;
+    }
+    
+    .report-preview .report-content h1 {
+        font-size: 20px;
+    }
+    
+    .report-preview .report-content h2 {
+        font-size: 16px;
+    }
+    
+    .report-preview .report-content table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+/* Estilos para impressão otimizados */
+@media print {
+    body * {
+        visibility: hidden;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .report-preview,
+    .report-preview * {
+        visibility: visible;
+    }
+    
+    .report-preview {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white;
+        color: black;
+        padding: 20mm;
+        margin: 0;
+        border: none;
+        overflow: visible;
+        max-height: none;
+        min-height: auto;
+    }
+    
+    .report-preview .report-content {
+        min-width: auto;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        page-break-inside: avoid;
+    }
+    
+    .report-preview .financial-summary {
+        display: flex;
+        justify-content: space-between;
+        page-break-inside: avoid;
+    }
+    
+    .report-preview .summary-item {
+        page-break-inside: avoid;
+    }
+    
+    .report-preview table {
+        page-break-inside: avoid;
+    }
+    
+    .report-preview tr {
+        page-break-inside: avoid;
+    }
+    
+    @page {
+        margin: 15mm;
+        size: A4;
+    }
+    
+    button, .form-actions, .navigation, .header, .footer,
+    .section-header, .report-controls {
+        display: none !important;
+    }
+}
+
+/* Labels para mobile nas listas */
+@media (max-width: 768px) {
+    #revenue-items .list-item span:nth-child(1)::before { content: "Fonte:"; }
+    #revenue-items .list-item span:nth-child(2)::before { content: "Valor:"; }
+    #revenue-items .list-item span:nth-child(3)::before { content: "Tipo:"; }
+    #revenue-items .list-item span:nth-child(4)::before { content: "Data:"; }
+    
+    #expense-items .list-item span:nth-child(1)::before { content: "Descrição:"; }
+    #expense-items .list-item span:nth-child(2)::before { content: "Valor:"; }
+    #expense-items .list-item span:nth-child(3)::before { content: "Categoria:"; }
+    #expense-items .list-item span:nth-child(4)::before { content: "Data:"; }
+    #expense-items .list-item span:nth-child(5)::before { content: "Nota:"; }
+    
+    #asset-items .list-item span:nth-child(1)::before { content: "Nome:"; }
+    #asset-items .list-item span:nth-child(2)::before { content: "Valor:"; }
+    #asset-items .list-item span:nth-child(3)::before { content: "Uso:"; }
+    #asset-items .list-item span:nth-child(4)::before { content: "Aquisição:"; }
+}
+
+/* Fullscreen para report */
+.report-preview.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    background: white;
+    padding: 20px;
+    overflow: auto;
+    max-height: none;
+}
+
+.report-preview.fullscreen .report-content {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Botão para sair do fullscreen */
+.report-preview.fullscreen::after {
+    content: "ESC para sair";
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    z-index: 10000;
 }
