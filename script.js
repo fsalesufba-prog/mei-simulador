@@ -22,6 +22,7 @@ class MEIAssistant {
         this.setCurrentYear();
         this.updateProgress();
         this.setupPrintStyles();
+        this.setupMobileLabels();
     }
     
     setupEventListeners() {
@@ -119,6 +120,9 @@ class MEIAssistant {
         document.getElementById('fis-cep').addEventListener('input', (e) => {
             this.formatCEP(e.target);
         });
+        
+        // Setup fullscreen and print buttons
+        this.setupReportControls();
     }
     
     navigateTo(section) {
@@ -159,11 +163,19 @@ class MEIAssistant {
                 this.generateReport();
             }
         }
+        
+        // Update mobile labels
+        this.setupMobileLabels();
     }
     
     generateYearOptions() {
         const select = document.getElementById('ano-fiscal');
         const currentYear = new Date().getFullYear();
+        
+        // Clear existing options except first
+        while (select.options.length > 1) {
+            select.remove(1);
+        }
         
         for (let year = currentYear; year >= 2020; year--) {
             const option = document.createElement('option');
@@ -178,6 +190,11 @@ class MEIAssistant {
         
         ['res-uf', 'fis-uf'].forEach(id => {
             const select = document.getElementById(id);
+            // Clear existing options except first
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+            
             ufs.forEach(uf => {
                 const option = document.createElement('option');
                 option.value = uf;
@@ -400,6 +417,9 @@ class MEIAssistant {
             currency: 'BRL'
         });
         countElement.textContent = this.state.revenues.length.toString();
+        
+        // Update mobile labels
+        this.setupMobileLabels();
     }
     
     addExpense() {
@@ -498,6 +518,9 @@ class MEIAssistant {
             .map(([cat, count]) => `${count} ${cat}`)
             .join(', ');
         categoryElement.textContent = categoryText;
+        
+        // Update mobile labels
+        this.setupMobileLabels();
     }
     
     addAsset() {
@@ -586,6 +609,9 @@ class MEIAssistant {
             currency: 'BRL'
         });
         professionalElement.textContent = `${professionalCount} itens`;
+        
+        // Update mobile labels
+        this.setupMobileLabels();
     }
     
     deleteItem(id, type) {
@@ -946,35 +972,51 @@ class MEIAssistant {
         let html = `
             <div class="report-content">
                 <header class="report-header">
-                    <h1>RELATÓRIO FISCAL MEI</h1>
-                    <p class="report-subtitle">Organização para Declaração Anual do Simples Nacional</p>
-                    <p class="report-meta">Gerado em: ${generatedDate} às ${generatedTime}</p>
+                    <div class="header-grid">
+                        <div class="header-logo">
+                            <div class="logo-symbol">📊</div>
+                            <div>
+                                <h1>RELATÓRIO FISCAL MEI</h1>
+                                <p class="report-subtitle">Organização para Declaração Anual - DASN-SIMEI</p>
+                            </div>
+                        </div>
+                        <div class="header-info">
+                            <p><strong>Data:</strong> ${generatedDate}</p>
+                            <p><strong>Hora:</strong> ${generatedTime}</p>
+                            <p><strong>Página:</strong> 1/1</p>
+                        </div>
+                    </div>
+                    <hr class="header-divider">
                 </header>
                 
                 <div class="report-section">
-                    <h2>📋 IDENTIFICAÇÃO DO CONTRIBUINTE</h2>
-                    <table class="report-table">
-                        <tr>
-                            <td><strong>Nome:</strong></td>
-                            <td>${this.state.identification.nome || 'Não informado'}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>CPF:</strong></td>
-                            <td>${this.state.identification.cpf || 'Não informado'}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>CNPJ MEI:</strong></td>
-                            <td>${this.state.identification.cnpj || 'Não informado'}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Ano Fiscal:</strong></td>
-                            <td>${this.state.identification.anoFiscal || 'Não informado'}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Data de Abertura:</strong></td>
-                            <td>${this.state.identification.dataAbertura || 'Não informado'}</td>
-                        </tr>
-                    </table>
+                    <h2>📋 IDENTIFICAÇÃO DO MEI</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <strong>Nome:</strong>
+                            <span>${this.state.identification.nome || 'Não informado'}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>CPF:</strong>
+                            <span>${this.state.identification.cpf || 'Não informado'}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>CNPJ MEI:</strong>
+                            <span>${this.state.identification.cnpj || 'Não informado'}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Ano Fiscal:</strong>
+                            <span>${this.state.identification.anoFiscal || 'Não informado'}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Data Abertura:</strong>
+                            <span>${this.state.identification.dataAbertura || 'Não informado'}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Atividade:</strong>
+                            <span>${this.state.identification.atividade || 'Não informado'}</span>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="report-section">
@@ -983,44 +1025,51 @@ class MEIAssistant {
         
         if (this.state.address.sameAddress) {
             html += `
-                <p><strong>Endereço fiscal coincidente com endereço residencial</strong></p>
-                <table class="report-table">
-                    <tr>
-                        <td><strong>Logradouro:</strong></td>
-                        <td>${this.state.address.residential?.logradouro || 'Não informado'}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Número:</strong></td>
-                        <td>${this.state.address.residential?.numero || 'Não informado'}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Complemento:</strong></td>
-                        <td>${this.state.address.residential?.complemento || 'Não informado'}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Bairro:</strong></td>
-                        <td>${this.state.address.residential?.bairro || 'Não informado'}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Cidade/UF:</strong></td>
-                        <td>${this.state.address.residential?.cidade || 'Não informado'}/${this.state.address.residential?.uf || 'Não informado'}</td>
-                    </tr>
-                </table>
+                <div class="info-grid">
+                    <div class="info-item full-width">
+                        <strong>Status:</strong>
+                        <span>Endereço fiscal coincidente com residencial ✓</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Logradouro:</strong>
+                        <span>${this.state.address.residential?.logradouro || 'Não informado'}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Número:</strong>
+                        <span>${this.state.address.residential?.numero || 'Não informado'}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Complemento:</strong>
+                        <span>${this.state.address.residential?.complemento || 'Não informado'}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Bairro:</strong>
+                        <span>${this.state.address.residential?.bairro || 'Não informado'}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Cidade/UF:</strong>
+                        <span>${this.state.address.residential?.cidade || 'Não informado'}/${this.state.address.residential?.uf || 'Não informado'}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>CEP:</strong>
+                        <span>${this.state.address.residential?.cep || 'Não informado'}</span>
+                    </div>
+                </div>
             `;
         } else {
             html += `
-                <div class="address-columns">
+                <div class="address-grid">
                     <div class="address-column">
-                        <h3>Endereço Residencial</h3>
-                        <table class="report-table">
-                            ${this.generateAddressTable(this.state.address.residential)}
-                        </table>
+                        <h3>🏠 Endereço Residencial</h3>
+                        <div class="info-grid">
+                            ${this.generateAddressInfo(this.state.address.residential)}
+                        </div>
                     </div>
                     <div class="address-column">
-                        <h3>Endereço Fiscal</h3>
-                        <table class="report-table">
-                            ${this.generateAddressTable(this.state.address.fiscal)}
-                        </table>
+                        <h3>🏢 Endereço Fiscal</h3>
+                        <div class="info-grid">
+                            ${this.generateAddressInfo(this.state.address.fiscal)}
+                        </div>
                     </div>
                 </div>
             `;
@@ -1031,20 +1080,16 @@ class MEIAssistant {
                 
                 <div class="report-section">
                     <h2>🏢 ATIVIDADE ECONÔMICA</h2>
-                    <table class="report-table">
-                        <tr>
-                            <td><strong>Tipo de Atividade:</strong></td>
-                            <td>${this.state.identification.atividade || 'Não informado'}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>CNAE:</strong></td>
-                            <td>${this.state.activity.cnae || 'Não informado'}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Descrição:</strong></td>
-                            <td>${this.state.activity.descricao || 'Não informado'}</td>
-                        </tr>
-                    </table>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <strong>CNAE:</strong>
+                            <span>${this.state.activity.cnae || 'Não informado'}</span>
+                        </div>
+                        <div class="info-item full-width">
+                            <strong>Descrição:</strong>
+                            <span>${this.state.activity.descricao || 'Não informado'}</span>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="report-section">
@@ -1087,11 +1132,18 @@ class MEIAssistant {
             
             this.state.revenues.forEach(revenue => {
                 const date = new Date(revenue.date).toLocaleDateString('pt-BR');
+                const typeLabels = {
+                    'servico': 'Serviço',
+                    'comercio': 'Comércio',
+                    'misto': 'Misto',
+                    'outro': 'Outro'
+                };
+                
                 html += `
                     <tr>
                         <td>${revenue.source}</td>
                         <td>${revenue.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</td>
-                        <td>${revenue.type}</td>
+                        <td>${typeLabels[revenue.type] || revenue.type}</td>
                         <td>${date}</td>
                     </tr>
                 `;
@@ -1123,11 +1175,19 @@ class MEIAssistant {
             
             this.state.expenses.forEach(expense => {
                 const date = new Date(expense.date).toLocaleDateString('pt-BR');
+                const categoryLabels = {
+                    'operacional': 'Operacional',
+                    'transporte': 'Transporte',
+                    'equipamentos': 'Equipamentos',
+                    'tributos': 'Tributos',
+                    'outros': 'Outros'
+                };
+                
                 html += `
                     <tr>
                         <td>${expense.description}</td>
                         <td>${expense.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</td>
-                        <td>${expense.category}</td>
+                        <td>${categoryLabels[expense.category] || expense.category}</td>
                         <td>${date}</td>
                         <td>${expense.note || '-'}</td>
                     </tr>
@@ -1160,11 +1220,17 @@ class MEIAssistant {
             
             this.state.assets.forEach(asset => {
                 const date = new Date(asset.date).toLocaleDateString('pt-BR');
+                const useLabels = {
+                    'profissional': 'Profissional',
+                    'pessoal': 'Pessoal',
+                    'misto': 'Misto'
+                };
+                
                 html += `
                     <tr>
                         <td>${asset.name}</td>
                         <td>${asset.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</td>
-                        <td>${asset.use}</td>
+                        <td>${useLabels[asset.use] || asset.use}</td>
                         <td>${date}</td>
                     </tr>
                 `;
@@ -1198,12 +1264,15 @@ class MEIAssistant {
         html += `
                         <p>📝 Este relatório é um organizador fiscal e não substitui a declaração oficial na Receita Federal.</p>
                         <p>👨‍💼 Recomenda-se consultar um contador profissional para validação final dos dados.</p>
+                        <p>📅 Ano de referência: ${this.state.identification.anoFiscal || 'Não informado'}</p>
+                        <p>🕒 Gerado em: ${generatedDate} às ${generatedTime}</p>
                     </div>
                 </div>
                 
                 <footer class="report-footer">
                     <p>--- FIM DO RELATÓRIO ---</p>
                     <p class="footer-note">Gerado pelo Assistente Fiscal MEI - Sistema de organização pré-declaração</p>
+                    <p class="footer-company">S&Q TECNOLOGIA DA INFORMACAO LTDA | CNPJ: 64.684.955/0001-98</p>
                 </footer>
             </div>
         `;
@@ -1218,96 +1287,200 @@ class MEIAssistant {
                 color: #333;
                 line-height: 1.6;
             }
+            
             .report-header {
-                text-align: center;
-                margin-bottom: 40px;
-                padding-bottom: 20px;
-                border-bottom: 2px solid #333;
+                margin-bottom: 30px;
             }
-            .report-header h1 {
+            
+            .header-grid {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                flex-wrap: wrap;
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .header-logo {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                flex: 1;
+            }
+            
+            .logo-symbol {
+                font-size: 40px;
+            }
+            
+            .header-logo h1 {
                 font-size: 24px;
-                margin-bottom: 10px;
-                color: #333;
+                margin: 0;
+                color: #222;
             }
+            
             .report-subtitle {
                 font-size: 14px;
                 color: #666;
-                margin-bottom: 10px;
+                margin: 5px 0 0 0;
             }
-            .report-meta {
-                font-size: 12px;
-                color: #888;
+            
+            .header-info {
+                text-align: right;
+                font-size: 14px;
+                color: #555;
             }
+            
+            .header-info p {
+                margin: 5px 0;
+            }
+            
+            .header-divider {
+                border: none;
+                border-top: 2px solid #00d4ff;
+                margin: 20px 0;
+            }
+            
             .report-section {
                 margin-bottom: 30px;
                 page-break-inside: avoid;
             }
+            
             .report-section h2 {
                 font-size: 18px;
-                margin-bottom: 15px;
+                margin: 0 0 15px 0;
+                padding-bottom: 8px;
+                border-bottom: 2px solid #00d4ff;
                 color: #333;
-                background: #f5f5f5;
-                padding: 10px;
-                border-left: 4px solid #00d4ff;
             }
-            .report-table {
-                width: 100%;
-                border-collapse: collapse;
-                margin: 10px 0;
+            
+            .info-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 15px;
+                margin: 15px 0;
             }
-            .report-table td {
-                padding: 8px;
-                border-bottom: 1px solid #eee;
+            
+            .info-item {
+                display: flex;
+                flex-direction: column;
+                padding: 12px;
+                background: #f9f9f9;
+                border-radius: 6px;
+                border-left: 4px solid #9d4edd;
             }
-            .report-table.detailed {
-                font-size: 12px;
+            
+            .info-item.full-width {
+                grid-column: 1 / -1;
             }
-            .report-table.detailed th {
-                background: #f5f5f5;
-                padding: 10px;
-                text-align: left;
+            
+            .info-item strong {
+                color: #666;
+                font-size: 13px;
+                margin-bottom: 5px;
                 font-weight: 600;
             }
-            .report-table.detailed td {
-                padding: 8px 10px;
+            
+            .info-item span {
+                color: #333;
+                font-size: 14px;
             }
-            .financial-summary {
-                display: flex;
-                justify-content: space-between;
+            
+            .address-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 30px;
                 margin: 20px 0;
             }
+            
+            .address-column h3 {
+                font-size: 16px;
+                margin: 0 0 15px 0;
+                color: #555;
+                padding-bottom: 5px;
+                border-bottom: 1px solid #ddd;
+            }
+            
+            .financial-summary {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+                margin: 25px 0;
+            }
+            
             .summary-item {
                 text-align: center;
-                padding: 15px;
-                background: #f9f9f9;
+                padding: 20px;
+                background: #f5f5f5;
                 border-radius: 8px;
-                flex: 1;
-                margin: 0 10px;
+                border: 1px solid #ddd;
             }
+            
+            .summary-item h3 {
+                font-size: 16px;
+                margin: 0 0 10px 0;
+                color: #555;
+            }
+            
             .summary-value {
-                font-size: 20px;
+                font-size: 24px;
                 font-weight: bold;
                 color: #00d4ff;
                 margin: 10px 0;
             }
-            .address-columns {
-                display: flex;
-                gap: 30px;
+            
+            .summary-detail {
+                font-size: 13px;
+                color: #777;
+                margin: 5px 0 0 0;
             }
-            .address-column {
-                flex: 1;
+            
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                font-size: 13px;
             }
-            .address-column h3 {
-                font-size: 16px;
-                margin-bottom: 10px;
-                color: #666;
+            
+            th {
+                background: #f0f0f0;
+                padding: 12px 10px;
+                text-align: left;
+                font-weight: 600;
+                border-bottom: 2px solid #ddd;
+                color: #555;
             }
-            .observations p {
-                padding: 8px;
+            
+            td {
+                padding: 10px;
+                border-bottom: 1px solid #eee;
+                color: #444;
+            }
+            
+            tr:hover {
                 background: #f9f9f9;
-                border-left: 3px solid #9d4edd;
-                margin: 5px 0;
             }
+            
+            .observations {
+                background: #fff8e1;
+                padding: 20px;
+                border-radius: 8px;
+                border-left: 4px solid #ffb300;
+                margin: 20px 0;
+            }
+            
+            .observations p {
+                margin: 8px 0;
+                padding-left: 10px;
+                position: relative;
+            }
+            
+            .observations p::before {
+                content: "•";
+                position: absolute;
+                left: 0;
+                color: #ffb300;
+            }
+            
             .report-footer {
                 text-align: center;
                 margin-top: 50px;
@@ -1316,35 +1489,145 @@ class MEIAssistant {
                 color: #888;
                 font-size: 12px;
             }
-            @media print {
-                .address-columns {
-                    display: block;
+            
+            .footer-note {
+                margin: 10px 0;
+                font-style: italic;
+            }
+            
+            .footer-company {
+                margin: 10px 0 0 0;
+                color: #666;
+                font-weight: 500;
+            }
+            
+            @media (max-width: 768px) {
+                .header-grid {
+                    flex-direction: column;
                 }
+                
+                .header-info {
+                    text-align: left;
+                }
+                
+                .info-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .address-grid {
+                    grid-template-columns: 1fr;
+                    gap: 20px;
+                }
+                
                 .financial-summary {
-                    display: block;
+                    grid-template-columns: 1fr;
+                    gap: 15px;
                 }
+                
+                table {
+                    display: block;
+                    overflow-x: auto;
+                }
+                
+                .report-content {
+                    padding: 15px !important;
+                }
+            }
+            
+            @media print {
+                .info-item {
+                    background: #fff !important;
+                    border: 1px solid #ddd !important;
+                    border-left: 4px solid #9d4edd !important;
+                }
+                
                 .summary-item {
-                    margin: 10px 0;
+                    background: #fff !important;
+                    border: 1px solid #ddd !important;
+                }
+                
+                .observations {
+                    background: #fff !important;
+                    border: 1px solid #ddd !important;
+                    border-left: 4px solid #ffb300 !important;
+                }
+                
+                @page {
+                    margin: 15mm;
                 }
             }
         `;
         
         preview.appendChild(style);
+        
+        // Update mobile labels for report
+        this.setupMobileLabels();
     }
     
-    generateAddressTable(address) {
-        if (!address) return '<tr><td colspan="2">Não informado</td></tr>';
+    generateAddressInfo(address) {
+        if (!address) {
+            return `
+                <div class="info-item full-width">
+                    <strong>Endereço:</strong>
+                    <span>Não informado</span>
+                </div>
+            `;
+        }
         
         return `
-            <tr><td><strong>Logradouro:</strong></td><td>${address.logradouro || 'Não informado'}</td></tr>
-            <tr><td><strong>Número:</strong></td><td>${address.numero || 'Não informado'}</td></tr>
-            <tr><td><strong>Complemento:</strong></td><td>${address.complemento || 'Não informado'}</td></tr>
-            <tr><td><strong>Bairro:</strong></td><td>${address.bairro || 'Não informado'}</td></tr>
-            <tr><td><strong>Cidade/UF:</strong></td><td>${address.cidade || 'Não informado'}/${address.uf || 'Não informado'}</td></tr>
+            <div class="info-item"><strong>Logradouro:</strong><span>${address.logradouro || '-'}</span></div>
+            <div class="info-item"><strong>Número:</strong><span>${address.numero || '-'}</span></div>
+            <div class="info-item"><strong>Complemento:</strong><span>${address.complemento || '-'}</span></div>
+            <div class="info-item"><strong>Bairro:</strong><span>${address.bairro || '-'}</span></div>
+            <div class="info-item"><strong>Cidade/UF:</strong><span>${address.cidade || '-'}/${address.uf || '-'}</span></div>
+            <div class="info-item"><strong>CEP:</strong><span>${address.cep || '-'}</span></div>
         `;
     }
     
+    setupReportControls() {
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const printBtn = document.getElementById('print-btn');
+        const reportPreview = document.getElementById('report-preview');
+        
+        if (fullscreenBtn && reportPreview) {
+            fullscreenBtn.addEventListener('click', () => {
+                const isFullscreen = reportPreview.classList.toggle('fullscreen');
+                if (isFullscreen) {
+                    fullscreenBtn.innerHTML = '📱 Sair Tela Cheia';
+                    // Add ESC key listener
+                    document.addEventListener('keydown', this.handleEscKey.bind(this));
+                } else {
+                    fullscreenBtn.innerHTML = '📱 Tela Cheia';
+                    // Remove ESC key listener
+                    document.removeEventListener('keydown', this.handleEscKey.bind(this));
+                }
+            });
+        }
+        
+        if (printBtn) {
+            printBtn.addEventListener('click', () => {
+                this.exportPDF();
+            });
+        }
+    }
+    
+    handleEscKey(e) {
+        if (e.key === 'Escape') {
+            const reportPreview = document.getElementById('report-preview');
+            const fullscreenBtn = document.getElementById('fullscreen-btn');
+            
+            if (reportPreview && reportPreview.classList.contains('fullscreen')) {
+                reportPreview.classList.remove('fullscreen');
+                if (fullscreenBtn) {
+                    fullscreenBtn.innerHTML = '📱 Tela Cheia';
+                }
+                document.removeEventListener('keydown', this.handleEscKey.bind(this));
+            }
+        }
+    }
+    
     exportPDF() {
+        // Trigger print dialog
         window.print();
     }
     
@@ -1396,30 +1679,53 @@ class MEIAssistant {
     }
     
     setupPrintStyles() {
-        const style = document.createElement('style');
-        style.textContent = `
-            @media print {
-                body * {
-                    visibility: hidden;
+        // Print styles are already in CSS
+    }
+    
+    setupMobileLabels() {
+        if (window.innerWidth <= 768) {
+            // Setup labels for revenue items
+            const revenueItems = document.querySelectorAll('#revenue-items .list-item');
+            revenueItems.forEach(item => {
+                const spans = item.querySelectorAll('span');
+                if (spans.length >= 4) {
+                    spans[0].setAttribute('data-label', 'Fonte:');
+                    spans[1].setAttribute('data-label', 'Valor:');
+                    spans[2].setAttribute('data-label', 'Tipo:');
+                    spans[3].setAttribute('data-label', 'Data:');
                 }
-                .report-preview,
-                .report-preview * {
-                    visibility: visible;
+            });
+            
+            // Setup labels for expense items
+            const expenseItems = document.querySelectorAll('#expense-items .list-item');
+            expenseItems.forEach(item => {
+                const spans = item.querySelectorAll('span');
+                if (spans.length >= 5) {
+                    spans[0].setAttribute('data-label', 'Descrição:');
+                    spans[1].setAttribute('data-label', 'Valor:');
+                    spans[2].setAttribute('data-label', 'Categoria:');
+                    spans[3].setAttribute('data-label', 'Data:');
+                    spans[4].setAttribute('data-label', 'Nota:');
                 }
-                .report-preview {
-                    position: absolute;
-                    left: 0;
-                    top: 0;
-                    width: 100%;
-                    background: white;
-                    color: black;
+            });
+            
+            // Setup labels for asset items
+            const assetItems = document.querySelectorAll('#asset-items .list-item');
+            assetItems.forEach(item => {
+                const spans = item.querySelectorAll('span');
+                if (spans.length >= 4) {
+                    spans[0].setAttribute('data-label', 'Nome:');
+                    spans[1].setAttribute('data-label', 'Valor:');
+                    spans[2].setAttribute('data-label', 'Uso:');
+                    spans[3].setAttribute('data-label', 'Aquisição:');
                 }
-                button, .form-actions, .navigation, .header, .footer {
-                    display: none !important;
-                }
-            }
-        `;
-        document.head.appendChild(style);
+            });
+        }
+        
+        // Update on resize
+        window.addEventListener('resize', () => {
+            setTimeout(() => this.setupMobileLabels(), 100);
+        });
     }
 }
 
