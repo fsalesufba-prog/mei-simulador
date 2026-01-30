@@ -1,0 +1,1429 @@
+// script.js
+class MEIAssistant {
+    constructor() {
+        this.state = {
+            identification: {},
+            address: {},
+            activity: {},
+            revenues: [],
+            expenses: [],
+            assets: [],
+            currentSection: 'home'
+        };
+        
+        this.init();
+    }
+    
+    init() {
+        this.loadState();
+        this.setupEventListeners();
+        this.generateYearOptions();
+        this.populateUFSelects();
+        this.setCurrentYear();
+        this.updateProgress();
+        this.setupPrintStyles();
+    }
+    
+    setupEventListeners() {
+        // Navigation
+        document.addEventListener('click', (e) => {
+            const navBtn = e.target.closest('.nav-btn');
+            if (navBtn) {
+                const section = navBtn.dataset.section;
+                this.navigateTo(section);
+                return;
+            }
+            
+            const formActionBtn = e.target.closest('[data-section]');
+            if (formActionBtn && formActionBtn.dataset.section) {
+                this.navigateTo(formActionBtn.dataset.section);
+                return;
+            }
+            
+            // Add revenue
+            if (e.target.id === 'add-revenue') {
+                this.addRevenue();
+                return;
+            }
+            
+            // Add expense
+            if (e.target.id === 'add-expense') {
+                this.addExpense();
+                return;
+            }
+            
+            // Add asset
+            if (e.target.id === 'add-asset') {
+                this.addAsset();
+                return;
+            }
+            
+            // Delete items
+            if (e.target.classList.contains('delete-btn')) {
+                const itemId = e.target.dataset.id;
+                const type = e.target.dataset.type;
+                this.deleteItem(itemId, type);
+                return;
+            }
+            
+            // Export PDF
+            if (e.target.id === 'export-pdf') {
+                this.exportPDF();
+                return;
+            }
+            
+            // Backup data
+            if (e.target.id === 'backup-data') {
+                this.backupData();
+                return;
+            }
+            
+            // Clear data
+            if (e.target.id === 'clear-data') {
+                if (confirm('Tem certeza que deseja limpar todos os dados? Esta ação não pode ser desfeita.')) {
+                    this.clearData();
+                }
+                return;
+            }
+        });
+        
+        // Form input auto-save
+        document.addEventListener('input', (e) => {
+            if (e.target.matches('.form-input, select, textarea')) {
+                this.saveFormData();
+            }
+        });
+        
+        // Same address toggle
+        document.getElementById('same-address-toggle').addEventListener('change', (e) => {
+            this.toggleSameAddress(e.target.checked);
+        });
+        
+        // Format CPF/CNPJ
+        document.getElementById('cpf').addEventListener('input', (e) => {
+            this.formatCPF(e.target);
+        });
+        
+        document.getElementById('cnpj').addEventListener('input', (e) => {
+            this.formatCNPJ(e.target);
+        });
+        
+        // CEP formatting
+        document.getElementById('res-cep').addEventListener('input', (e) => {
+            this.formatCEP(e.target);
+            if (document.getElementById('same-address-toggle').checked) {
+                this.syncAddressFields();
+            }
+        });
+        
+        document.getElementById('fis-cep').addEventListener('input', (e) => {
+            this.formatCEP(e.target);
+        });
+    }
+    
+    navigateTo(section) {
+        // Update navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.section === section) {
+                btn.classList.add('active');
+            }
+        });
+        
+        // Update indicator
+        const activeBtn = document.querySelector(`.nav-btn[data-section="${section}"]`);
+        if (activeBtn) {
+            const navIndicator = document.querySelector('.nav-indicator');
+            const btnRect = activeBtn.getBoundingClientRect();
+            const navRect = document.querySelector('.navigation').getBoundingClientRect();
+            
+            navIndicator.style.left = `${btnRect.left - navRect.left}px`;
+            navIndicator.style.width = `${btnRect.width}px`;
+        }
+        
+        // Update sections
+        document.querySelectorAll('.section').forEach(sec => {
+            sec.classList.remove('active');
+        });
+        
+        const targetSection = document.getElementById(`${section}-section`);
+        if (targetSection) {
+            targetSection.classList.add('active');
+            this.state.currentSection = section;
+            this.saveState();
+            
+            // Special handling for validation and report sections
+            if (section === 'validation') {
+                this.runValidations();
+            } else if (section === 'report') {
+                this.generateReport();
+            }
+        }
+    }
+    
+    generateYearOptions() {
+        const select = document.getElementById('ano-fiscal');
+        const currentYear = new Date().getFullYear();
+        
+        for (let year = currentYear; year >= 2020; year--) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            select.appendChild(option);
+        }
+    }
+    
+    populateUFSelects() {
+        const ufs = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+        
+        ['res-uf', 'fis-uf'].forEach(id => {
+            const select = document.getElementById(id);
+            ufs.forEach(uf => {
+                const option = document.createElement('option');
+                option.value = uf;
+                option.textContent = uf;
+                select.appendChild(option);
+            });
+        });
+    }
+    
+    setCurrentYear() {
+        const currentYear = new Date().getFullYear();
+        document.getElementById('current-year').textContent = currentYear;
+    }
+    
+    formatCPF(input) {
+        let value = input.value.replace(/\D/g, '');
+        if (value.length > 11) value = value.substring(0, 11);
+        
+        if (value.length <= 11) {
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        }
+        
+        input.value = value;
+        this.validateCPF(value);
+    }
+    
+    validateCPF(cpf) {
+        const validation = document.getElementById('cpf-validation');
+        const cleanCPF = cpf.replace(/\D/g, '');
+        
+        if (cleanCPF.length === 0) {
+            validation.textContent = '';
+            validation.style.color = '';
+            return;
+        }
+        
+        if (cleanCPF.length !== 11) {
+            validation.textContent = 'CPF deve ter 11 dígitos';
+            validation.style.color = 'var(--error)';
+            return;
+        }
+        
+        // Basic validation
+        validation.textContent = '✓ Formato válido';
+        validation.style.color = 'var(--success)';
+    }
+    
+    formatCNPJ(input) {
+        let value = input.value.replace(/\D/g, '');
+        if (value.length > 14) value = value.substring(0, 14);
+        
+        if (value.length <= 14) {
+            value = value.replace(/(\d{2})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1/$2');
+            value = value.replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+        }
+        
+        input.value = value;
+        this.validateCNPJ(value);
+    }
+    
+    validateCNPJ(cnpj) {
+        const validation = document.getElementById('cnpj-validation');
+        const cleanCNPJ = cnpj.replace(/\D/g, '');
+        
+        if (cleanCNPJ.length === 0) {
+            validation.textContent = '';
+            validation.style.color = '';
+            return;
+        }
+        
+        if (cleanCNPJ.length !== 14) {
+            validation.textContent = 'CNPJ deve ter 14 dígitos';
+            validation.style.color = 'var(--error)';
+            return;
+        }
+        
+        validation.textContent = '✓ Formato válido';
+        validation.style.color = 'var(--success)';
+    }
+    
+    formatCEP(input) {
+        let value = input.value.replace(/\D/g, '');
+        if (value.length > 8) value = value.substring(0, 8);
+        
+        if (value.length > 5) {
+            value = value.replace(/(\d{5})(\d)/, '$1-$2');
+        }
+        
+        input.value = value;
+    }
+    
+    toggleSameAddress(checked) {
+        const fiscalFields = [
+            'fis-cep', 'fis-logradouro', 'fis-numero',
+            'fis-complemento', 'fis-bairro', 'fis-cidade', 'fis-uf'
+        ];
+        
+        fiscalFields.forEach(id => {
+            const field = document.getElementById(id);
+            field.disabled = checked;
+            
+            if (checked) {
+                field.classList.add('disabled');
+            } else {
+                field.classList.remove('disabled');
+            }
+        });
+        
+        if (checked) {
+            this.syncAddressFields();
+        }
+    }
+    
+    syncAddressFields() {
+        const residentialFields = [
+            'res-cep', 'res-logradouro', 'res-numero',
+            'res-complemento', 'res-bairro', 'res-cidade', 'res-uf'
+        ];
+        
+        const fiscalFields = [
+            'fis-cep', 'fis-logradouro', 'fis-numero',
+            'fis-complemento', 'fis-bairro', 'fis-cidade', 'fis-uf'
+        ];
+        
+        residentialFields.forEach((resId, index) => {
+            const fisId = fiscalFields[index];
+            const resField = document.getElementById(resId);
+            const fisField = document.getElementById(fisId);
+            
+            if (resField && fisField) {
+                fisField.value = resField.value;
+            }
+        });
+    }
+    
+    addRevenue() {
+        const source = document.getElementById('revenue-source').value.trim();
+        const value = parseFloat(document.getElementById('revenue-value').value);
+        const type = document.getElementById('revenue-type').value;
+        const date = document.getElementById('revenue-date').value;
+        
+        if (!source || isNaN(value) || !date) {
+            alert('Preencha todos os campos obrigatórios da receita.');
+            return;
+        }
+        
+        const revenue = {
+            id: Date.now(),
+            source,
+            value,
+            type,
+            date
+        };
+        
+        this.state.revenues.push(revenue);
+        this.saveState();
+        this.updateRevenuesList();
+        this.clearRevenueForm();
+    }
+    
+    clearRevenueForm() {
+        document.getElementById('revenue-source').value = '';
+        document.getElementById('revenue-value').value = '';
+        document.getElementById('revenue-date').value = '';
+    }
+    
+    updateRevenuesList() {
+        const container = document.getElementById('revenue-items');
+        const totalElement = document.getElementById('total-revenue');
+        const countElement = document.getElementById('revenue-count');
+        
+        if (this.state.revenues.length === 0) {
+            container.innerHTML = '<div class="empty-state">Nenhuma receita cadastrada ainda.</div>';
+            totalElement.textContent = 'R$ 0,00';
+            countElement.textContent = '0';
+            return;
+        }
+        
+        let total = 0;
+        let html = '';
+        
+        this.state.revenues.forEach(revenue => {
+            total += revenue.value;
+            
+            const formattedDate = new Date(revenue.date).toLocaleDateString('pt-BR');
+            const formattedValue = revenue.value.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            
+            const typeLabels = {
+                'servico': 'Serviço',
+                'comercio': 'Comércio',
+                'misto': 'Misto',
+                'outro': 'Outro'
+            };
+            
+            html += `
+                <div class="list-item">
+                    <span>${revenue.source}</span>
+                    <span>${formattedValue}</span>
+                    <span>${typeLabels[revenue.type] || revenue.type}</span>
+                    <span>${formattedDate}</span>
+                    <span>
+                        <button class="delete-btn" data-id="${revenue.id}" data-type="revenue">
+                            Excluir
+                        </button>
+                    </span>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        totalElement.textContent = total.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+        countElement.textContent = this.state.revenues.length.toString();
+    }
+    
+    addExpense() {
+        const description = document.getElementById('expense-description').value.trim();
+        const value = parseFloat(document.getElementById('expense-value').value);
+        const category = document.getElementById('expense-category').value;
+        const date = document.getElementById('expense-date').value;
+        const note = document.getElementById('expense-note').value.trim();
+        
+        if (!description || isNaN(value) || !date) {
+            alert('Preencha todos os campos obrigatórios da despesa.');
+            return;
+        }
+        
+        const expense = {
+            id: Date.now(),
+            description,
+            value,
+            category,
+            date,
+            note
+        };
+        
+        this.state.expenses.push(expense);
+        this.saveState();
+        this.updateExpensesList();
+        this.clearExpenseForm();
+    }
+    
+    clearExpenseForm() {
+        document.getElementById('expense-description').value = '';
+        document.getElementById('expense-value').value = '';
+        document.getElementById('expense-date').value = '';
+        document.getElementById('expense-note').value = '';
+    }
+    
+    updateExpensesList() {
+        const container = document.getElementById('expense-items');
+        const totalElement = document.getElementById('total-expenses');
+        const categoryElement = document.getElementById('expenses-by-category');
+        
+        if (this.state.expenses.length === 0) {
+            container.innerHTML = '<div class="empty-state">Nenhuma despesa cadastrada ainda.</div>';
+            totalElement.textContent = 'R$ 0,00';
+            categoryElement.textContent = '-';
+            return;
+        }
+        
+        let total = 0;
+        let html = '';
+        const categories = {};
+        
+        this.state.expenses.forEach(expense => {
+            total += expense.value;
+            
+            // Count by category
+            categories[expense.category] = (categories[expense.category] || 0) + 1;
+            
+            const formattedDate = new Date(expense.date).toLocaleDateString('pt-BR');
+            const formattedValue = expense.value.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            
+            const categoryLabels = {
+                'operacional': 'Operacional',
+                'transporte': 'Transporte',
+                'equipamentos': 'Equipamentos',
+                'tributos': 'Tributos',
+                'outros': 'Outros'
+            };
+            
+            html += `
+                <div class="list-item">
+                    <span>${expense.description}</span>
+                    <span>${formattedValue}</span>
+                    <span>${categoryLabels[expense.category] || expense.category}</span>
+                    <span>${formattedDate}</span>
+                    <span>
+                        <button class="delete-btn" data-id="${expense.id}" data-type="expense">
+                            Excluir
+                        </button>
+                    </span>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        totalElement.textContent = total.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+        
+        // Update category summary
+        const categoryText = Object.entries(categories)
+            .map(([cat, count]) => `${count} ${cat}`)
+            .join(', ');
+        categoryElement.textContent = categoryText;
+    }
+    
+    addAsset() {
+        const name = document.getElementById('asset-name').value.trim();
+        const value = parseFloat(document.getElementById('asset-value').value);
+        const date = document.getElementById('asset-date').value;
+        const use = document.getElementById('asset-use').value;
+        
+        if (!name || isNaN(value) || !date || !use) {
+            alert('Preencha todos os campos obrigatórios do bem.');
+            return;
+        }
+        
+        const asset = {
+            id: Date.now(),
+            name,
+            value,
+            date,
+            use
+        };
+        
+        this.state.assets.push(asset);
+        this.saveState();
+        this.updateAssetsList();
+        this.clearAssetForm();
+    }
+    
+    clearAssetForm() {
+        document.getElementById('asset-name').value = '';
+        document.getElementById('asset-value').value = '';
+        document.getElementById('asset-date').value = '';
+    }
+    
+    updateAssetsList() {
+        const container = document.getElementById('asset-items');
+        const totalElement = document.getElementById('total-assets');
+        const professionalElement = document.getElementById('professional-assets');
+        
+        if (this.state.assets.length === 0) {
+            container.innerHTML = '<div class="empty-state">Nenhum bem cadastrado ainda.</div>';
+            totalElement.textContent = 'R$ 0,00';
+            professionalElement.textContent = '0 itens';
+            return;
+        }
+        
+        let total = 0;
+        let professionalCount = 0;
+        let html = '';
+        
+        this.state.assets.forEach(asset => {
+            total += asset.value;
+            if (asset.use === 'profissional' || asset.use === 'misto') {
+                professionalCount++;
+            }
+            
+            const formattedDate = new Date(asset.date).toLocaleDateString('pt-BR');
+            const formattedValue = asset.value.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            
+            const useLabels = {
+                'profissional': 'Profissional',
+                'pessoal': 'Pessoal',
+                'misto': 'Misto'
+            };
+            
+            html += `
+                <div class="list-item">
+                    <span>${asset.name}</span>
+                    <span>${formattedValue}</span>
+                    <span>${useLabels[asset.use] || asset.use}</span>
+                    <span>${formattedDate}</span>
+                    <span>
+                        <button class="delete-btn" data-id="${asset.id}" data-type="asset">
+                            Excluir
+                        </button>
+                    </span>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        totalElement.textContent = total.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+        professionalElement.textContent = `${professionalCount} itens`;
+    }
+    
+    deleteItem(id, type) {
+        const itemId = parseInt(id);
+        
+        switch(type) {
+            case 'revenue':
+                this.state.revenues = this.state.revenues.filter(item => item.id !== itemId);
+                this.updateRevenuesList();
+                break;
+            case 'expense':
+                this.state.expenses = this.state.expenses.filter(item => item.id !== itemId);
+                this.updateExpensesList();
+                break;
+            case 'asset':
+                this.state.assets = this.state.assets.filter(item => item.id !== itemId);
+                this.updateAssetsList();
+                break;
+        }
+        
+        this.saveState();
+    }
+    
+    saveFormData() {
+        // Save identification
+        this.state.identification = {
+            nome: document.getElementById('nome').value,
+            cpf: document.getElementById('cpf').value,
+            cnpj: document.getElementById('cnpj').value,
+            anoFiscal: document.getElementById('ano-fiscal').value,
+            atividade: document.getElementById('atividade').value,
+            dataAbertura: document.getElementById('data-abertura').value
+        };
+        
+        // Save addresses
+        const sameAddress = document.getElementById('same-address-toggle').checked;
+        
+        this.state.address = {
+            sameAddress,
+            residential: {
+                cep: document.getElementById('res-cep').value,
+                logradouro: document.getElementById('res-logradouro').value,
+                numero: document.getElementById('res-numero').value,
+                complemento: document.getElementById('res-complemento').value,
+                bairro: document.getElementById('res-bairro').value,
+                cidade: document.getElementById('res-cidade').value,
+                uf: document.getElementById('res-uf').value
+            },
+            fiscal: sameAddress ? null : {
+                cep: document.getElementById('fis-cep').value,
+                logradouro: document.getElementById('fis-logradouro').value,
+                numero: document.getElementById('fis-numero').value,
+                complemento: document.getElementById('fis-complemento').value,
+                bairro: document.getElementById('fis-bairro').value,
+                cidade: document.getElementById('fis-cidade').value,
+                uf: document.getElementById('fis-uf').value
+            }
+        };
+        
+        // Save activity
+        this.state.activity = {
+            cnae: document.getElementById('cnae').value,
+            descricao: document.getElementById('descricao-atividade').value
+        };
+        
+        this.saveState();
+        this.updateProgress();
+    }
+    
+    saveState() {
+        localStorage.setItem('meiAssistantState', JSON.stringify(this.state));
+    }
+    
+    loadState() {
+        const saved = localStorage.getItem('meiAssistantState');
+        if (saved) {
+            this.state = JSON.parse(saved);
+            this.populateForm();
+            this.updateRevenuesList();
+            this.updateExpensesList();
+            this.updateAssetsList();
+            
+            // Navigate to saved section
+            if (this.state.currentSection) {
+                setTimeout(() => {
+                    this.navigateTo(this.state.currentSection);
+                }, 100);
+            }
+        }
+    }
+    
+    populateForm() {
+        // Identification
+        if (this.state.identification) {
+            document.getElementById('nome').value = this.state.identification.nome || '';
+            document.getElementById('cpf').value = this.state.identification.cpf || '';
+            document.getElementById('cnpj').value = this.state.identification.cnpj || '';
+            document.getElementById('ano-fiscal').value = this.state.identification.anoFiscal || '';
+            document.getElementById('atividade').value = this.state.identification.atividade || '';
+            document.getElementById('data-abertura').value = this.state.identification.dataAbertura || '';
+        }
+        
+        // Address
+        if (this.state.address) {
+            document.getElementById('same-address-toggle').checked = this.state.address.sameAddress || false;
+            this.toggleSameAddress(this.state.address.sameAddress);
+            
+            const res = this.state.address.residential || {};
+            document.getElementById('res-cep').value = res.cep || '';
+            document.getElementById('res-logradouro').value = res.logradouro || '';
+            document.getElementById('res-numero').value = res.numero || '';
+            document.getElementById('res-complemento').value = res.complemento || '';
+            document.getElementById('res-bairro').value = res.bairro || '';
+            document.getElementById('res-cidade').value = res.cidade || '';
+            document.getElementById('res-uf').value = res.uf || '';
+            
+            if (!this.state.address.sameAddress && this.state.address.fiscal) {
+                const fis = this.state.address.fiscal;
+                document.getElementById('fis-cep').value = fis.cep || '';
+                document.getElementById('fis-logradouro').value = fis.logradouro || '';
+                document.getElementById('fis-numero').value = fis.numero || '';
+                document.getElementById('fis-complemento').value = fis.complemento || '';
+                document.getElementById('fis-bairro').value = fis.bairro || '';
+                document.getElementById('fis-cidade').value = fis.cidade || '';
+                document.getElementById('fis-uf').value = fis.uf || '';
+            }
+        }
+        
+        // Activity
+        if (this.state.activity) {
+            document.getElementById('cnae').value = this.state.activity.cnae || '';
+            document.getElementById('descricao-atividade').value = this.state.activity.descricao || '';
+        }
+    }
+    
+    updateProgress() {
+        let filled = 0;
+        let total = 0;
+        
+        // Check required fields
+        const requiredFields = [
+            '#nome', '#cpf', '#cnpj', '#ano-fiscal', '#atividade', '#data-abertura',
+            '#res-logradouro', '#res-numero', '#res-bairro', '#res-cidade', '#res-uf',
+            '#descricao-atividade'
+        ];
+        
+        if (!this.state.address.sameAddress) {
+            requiredFields.push('#fis-logradouro', '#fis-numero', '#fis-bairro', '#fis-cidade', '#fis-uf');
+        }
+        
+        requiredFields.forEach(selector => {
+            const element = document.querySelector(selector);
+            if (element) {
+                total++;
+                if (element.value.trim()) filled++;
+            }
+        });
+        
+        const progress = total > 0 ? (filled / total) * 100 : 0;
+        document.getElementById('saved-progress').textContent = `${Math.round(progress)}%`;
+        document.querySelector('.progress-fill').style.width = `${progress}%`;
+    }
+    
+    runValidations() {
+        const validations = [
+            this.validateRevenueLimit(),
+            this.validateRequiredFields(),
+            this.validateAddress(),
+            this.validateTransactions()
+        ];
+        
+        const resultsList = document.getElementById('validation-results-list');
+        resultsList.innerHTML = '';
+        
+        validations.forEach(validation => {
+            const div = document.createElement('div');
+            div.className = 'validation-result-item';
+            div.innerHTML = `
+                <span>${validation.icon} ${validation.title}</span>
+                <span style="color: ${validation.color}">${validation.message}</span>
+            `;
+            resultsList.appendChild(div);
+        });
+    }
+    
+    validateRevenueLimit() {
+        const totalRevenue = this.state.revenues.reduce((sum, rev) => sum + rev.value, 0);
+        const limit = 81000; // MEI limit for 2024
+        
+        const card = document.getElementById('validation-revenue-limit');
+        const status = card.querySelector('.validation-status');
+        
+        if (totalRevenue > limit) {
+            status.textContent = '❌ LIMITE ULTRAPASSADO';
+            status.style.color = 'var(--error)';
+            return {
+                icon: '❌',
+                title: 'Limite de Faturamento',
+                message: `Ultrapassado! R$ ${totalRevenue.toLocaleString('pt-BR')} de R$ 81.000,00`,
+                color: 'var(--error)'
+            };
+        } else if (totalRevenue > limit * 0.9) {
+            status.textContent = '⚠️ PRÓXIMO DO LIMITE';
+            status.style.color = 'var(--warning)';
+            return {
+                icon: '⚠️',
+                title: 'Limite de Faturamento',
+                message: `Atenção! R$ ${totalRevenue.toLocaleString('pt-BR')} de R$ 81.000,00`,
+                color: 'var(--warning)'
+            };
+        } else {
+            status.textContent = '✅ DENTRO DO LIMITE';
+            status.style.color = 'var(--success)';
+            return {
+                icon: '✅',
+                title: 'Limite de Faturamento',
+                message: `Dentro do limite: R$ ${totalRevenue.toLocaleString('pt-BR')}`,
+                color: 'var(--success)'
+            };
+        }
+    }
+    
+    validateRequiredFields() {
+        const missing = [];
+        
+        if (!this.state.identification.nome) missing.push('Nome');
+        if (!this.state.identification.cpf) missing.push('CPF');
+        if (!this.state.identification.cnpj) missing.push('CNPJ');
+        if (!this.state.identification.anoFiscal) missing.push('Ano Fiscal');
+        if (!this.state.identification.dataAbertura) missing.push('Data de Abertura');
+        
+        const card = document.getElementById('validation-required-fields');
+        const status = card.querySelector('.validation-status');
+        
+        if (missing.length > 0) {
+            status.textContent = `❌ ${missing.length} CAMPO(S) FALTANDO`;
+            status.style.color = 'var(--error)';
+            return {
+                icon: '❌',
+                title: 'Campos Obrigatórios',
+                message: `${missing.length} campo(s) não preenchido(s)`,
+                color: 'var(--error)'
+            };
+        } else {
+            status.textContent = '✅ TODOS PREENCHIDOS';
+            status.style.color = 'var(--success)';
+            return {
+                icon: '✅',
+                title: 'Campos Obrigatórios',
+                message: 'Todos os campos obrigatórios preenchidos',
+                color: 'var(--success)'
+            };
+        }
+    }
+    
+    validateAddress() {
+        const sameAddress = this.state.address.sameAddress;
+        const res = this.state.address.residential;
+        const fis = this.state.address.fiscal;
+        
+        const card = document.getElementById('validation-address');
+        const status = card.querySelector('.validation-status');
+        
+        if (sameAddress) {
+            status.textContent = '✅ ENDEREÇOS COINCIDENTES';
+            status.style.color = 'var(--success)';
+            return {
+                icon: '✅',
+                title: 'Endereços',
+                message: 'Endereço fiscal coincide com residencial',
+                color: 'var(--success)'
+            };
+        } else {
+            const residentialComplete = res && res.logradouro && res.numero && res.cidade && res.uf;
+            const fiscalComplete = fis && fis.logradouro && fis.numero && fis.cidade && fis.uf;
+            
+            if (residentialComplete && fiscalComplete) {
+                status.textContent = '✅ ENDEREÇOS COMPLETOS';
+                status.style.color = 'var(--success)';
+                return {
+                    icon: '✅',
+                    title: 'Endereços',
+                    message: 'Endereços residencial e fiscal completos',
+                    color: 'var(--success)'
+                };
+            } else {
+                status.textContent = '⚠️ VERIFIQUE OS ENDEREÇOS';
+                status.style.color = 'var(--warning)';
+                return {
+                    icon: '⚠️',
+                    title: 'Endereços',
+                    message: 'Verifique a completude dos endereços',
+                    color: 'var(--warning)'
+                };
+            }
+        }
+    }
+    
+    validateTransactions() {
+        const hasRevenues = this.state.revenues.length > 0;
+        const hasExpenses = this.state.expenses.length > 0;
+        
+        const card = document.getElementById('validation-transactions');
+        const status = card.querySelector('.validation-status');
+        
+        if (hasRevenues && hasExpenses) {
+            status.textContent = '✅ MOVIMENTAÇÃO COMPLETA';
+            status.style.color = 'var(--success)';
+            return {
+                icon: '✅',
+                title: 'Movimentações',
+                message: `${this.state.revenues.length} receitas e ${this.state.expenses.length} despesas`,
+                color: 'var(--success)'
+            };
+        } else if (hasRevenues) {
+            status.textContent = '⚠️ SEM DESPESAS';
+            status.style.color = 'var(--warning)';
+            return {
+                icon: '⚠️',
+                title: 'Movimentações',
+                message: `${this.state.revenues.length} receitas, mas nenhuma despesa`,
+                color: 'var(--warning)'
+            };
+        } else if (hasExpenses) {
+            status.textContent = '⚠️ SEM RECEITAS';
+            status.style.color = 'var(--warning)';
+            return {
+                icon: '⚠️',
+                title: 'Movimentações',
+                message: `${this.state.expenses.length} despesas, mas nenhuma receita`,
+                color: 'var(--warning)'
+            };
+        } else {
+            status.textContent = '⚠️ SEM MOVIMENTAÇÃO';
+            status.style.color = 'var(--warning)';
+            return {
+                icon: '⚠️',
+                title: 'Movimentações',
+                message: 'Nenhuma receita ou despesa informada',
+                color: 'var(--warning)'
+            };
+        }
+    }
+    
+    generateReport() {
+        const preview = document.getElementById('report-preview');
+        
+        // Calculate totals
+        const totalRevenue = this.state.revenues.reduce((sum, rev) => sum + rev.value, 0);
+        const totalExpenses = this.state.expenses.reduce((sum, exp) => sum + exp.value, 0);
+        const totalAssets = this.state.assets.reduce((sum, asset) => sum + asset.value, 0);
+        
+        // Format dates
+        const now = new Date();
+        const generatedDate = now.toLocaleDateString('pt-BR');
+        const generatedTime = now.toLocaleTimeString('pt-BR');
+        
+        let html = `
+            <div class="report-content">
+                <header class="report-header">
+                    <h1>RELATÓRIO FISCAL MEI</h1>
+                    <p class="report-subtitle">Organização para Declaração Anual do Simples Nacional</p>
+                    <p class="report-meta">Gerado em: ${generatedDate} às ${generatedTime}</p>
+                </header>
+                
+                <div class="report-section">
+                    <h2>📋 IDENTIFICAÇÃO DO CONTRIBUINTE</h2>
+                    <table class="report-table">
+                        <tr>
+                            <td><strong>Nome:</strong></td>
+                            <td>${this.state.identification.nome || 'Não informado'}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>CPF:</strong></td>
+                            <td>${this.state.identification.cpf || 'Não informado'}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>CNPJ MEI:</strong></td>
+                            <td>${this.state.identification.cnpj || 'Não informado'}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ano Fiscal:</strong></td>
+                            <td>${this.state.identification.anoFiscal || 'Não informado'}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data de Abertura:</strong></td>
+                            <td>${this.state.identification.dataAbertura || 'Não informado'}</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="report-section">
+                    <h2>📍 ENDEREÇOS</h2>
+        `;
+        
+        if (this.state.address.sameAddress) {
+            html += `
+                <p><strong>Endereço fiscal coincidente com endereço residencial</strong></p>
+                <table class="report-table">
+                    <tr>
+                        <td><strong>Logradouro:</strong></td>
+                        <td>${this.state.address.residential?.logradouro || 'Não informado'}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Número:</strong></td>
+                        <td>${this.state.address.residential?.numero || 'Não informado'}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Complemento:</strong></td>
+                        <td>${this.state.address.residential?.complemento || 'Não informado'}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bairro:</strong></td>
+                        <td>${this.state.address.residential?.bairro || 'Não informado'}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cidade/UF:</strong></td>
+                        <td>${this.state.address.residential?.cidade || 'Não informado'}/${this.state.address.residential?.uf || 'Não informado'}</td>
+                    </tr>
+                </table>
+            `;
+        } else {
+            html += `
+                <div class="address-columns">
+                    <div class="address-column">
+                        <h3>Endereço Residencial</h3>
+                        <table class="report-table">
+                            ${this.generateAddressTable(this.state.address.residential)}
+                        </table>
+                    </div>
+                    <div class="address-column">
+                        <h3>Endereço Fiscal</h3>
+                        <table class="report-table">
+                            ${this.generateAddressTable(this.state.address.fiscal)}
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+        
+        html += `
+                </div>
+                
+                <div class="report-section">
+                    <h2>🏢 ATIVIDADE ECONÔMICA</h2>
+                    <table class="report-table">
+                        <tr>
+                            <td><strong>Tipo de Atividade:</strong></td>
+                            <td>${this.state.identification.atividade || 'Não informado'}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>CNAE:</strong></td>
+                            <td>${this.state.activity.cnae || 'Não informado'}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Descrição:</strong></td>
+                            <td>${this.state.activity.descricao || 'Não informado'}</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="report-section">
+                    <h2>💰 RESUMO FINANCEIRO</h2>
+                    <div class="financial-summary">
+                        <div class="summary-item">
+                            <h3>Total de Receitas</h3>
+                            <p class="summary-value">${totalRevenue.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</p>
+                            <p class="summary-detail">${this.state.revenues.length} lançamento(s)</p>
+                        </div>
+                        <div class="summary-item">
+                            <h3>Total de Despesas</h3>
+                            <p class="summary-value">${totalExpenses.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</p>
+                            <p class="summary-detail">${this.state.expenses.length} lançamento(s)</p>
+                        </div>
+                        <div class="summary-item">
+                            <h3>Saldo Operacional</h3>
+                            <p class="summary-value">${(totalRevenue - totalExpenses).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</p>
+                            <p class="summary-detail">Receitas - Despesas</p>
+                        </div>
+                    </div>
+                </div>
+        `;
+        
+        if (this.state.revenues.length > 0) {
+            html += `
+                <div class="report-section">
+                    <h2>📈 RECEITAS DETALHADAS</h2>
+                    <table class="report-table detailed">
+                        <thead>
+                            <tr>
+                                <th>Fonte</th>
+                                <th>Valor</th>
+                                <th>Tipo</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            this.state.revenues.forEach(revenue => {
+                const date = new Date(revenue.date).toLocaleDateString('pt-BR');
+                html += `
+                    <tr>
+                        <td>${revenue.source}</td>
+                        <td>${revenue.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</td>
+                        <td>${revenue.type}</td>
+                        <td>${date}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        if (this.state.expenses.length > 0) {
+            html += `
+                <div class="report-section">
+                    <h2>📉 DESPESAS DETALHADAS</h2>
+                    <table class="report-table detailed">
+                        <thead>
+                            <tr>
+                                <th>Descrição</th>
+                                <th>Valor</th>
+                                <th>Categoria</th>
+                                <th>Data</th>
+                                <th>Nota</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            this.state.expenses.forEach(expense => {
+                const date = new Date(expense.date).toLocaleDateString('pt-BR');
+                html += `
+                    <tr>
+                        <td>${expense.description}</td>
+                        <td>${expense.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</td>
+                        <td>${expense.category}</td>
+                        <td>${date}</td>
+                        <td>${expense.note || '-'}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        if (this.state.assets.length > 0) {
+            html += `
+                <div class="report-section">
+                    <h2>🏠 BENS E PATRIMÔNIO</h2>
+                    <p><strong>Valor total estimado:</strong> ${totalAssets.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</p>
+                    <table class="report-table detailed">
+                        <thead>
+                            <tr>
+                                <th>Bem</th>
+                                <th>Valor</th>
+                                <th>Uso</th>
+                                <th>Aquisição</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            this.state.assets.forEach(asset => {
+                const date = new Date(asset.date).toLocaleDateString('pt-BR');
+                html += `
+                    <tr>
+                        <td>${asset.name}</td>
+                        <td>${asset.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</td>
+                        <td>${asset.use}</td>
+                        <td>${date}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        html += `
+                <div class="report-section">
+                    <h2>⚖️ OBSERVAÇÕES FISCAIS</h2>
+                    <div class="observations">
+        `;
+        
+        // Add observations based on validations
+        const validations = [
+            this.validateRevenueLimit(),
+            this.validateRequiredFields(),
+            this.validateAddress(),
+            this.validateTransactions()
+        ];
+        
+        validations.forEach(v => {
+            html += `<p>${v.icon} ${v.message}</p>`;
+        });
+        
+        html += `
+                        <p>📝 Este relatório é um organizador fiscal e não substitui a declaração oficial na Receita Federal.</p>
+                        <p>👨‍💼 Recomenda-se consultar um contador profissional para validação final dos dados.</p>
+                    </div>
+                </div>
+                
+                <footer class="report-footer">
+                    <p>--- FIM DO RELATÓRIO ---</p>
+                    <p class="footer-note">Gerado pelo Assistente Fiscal MEI - Sistema de organização pré-declaração</p>
+                </footer>
+            </div>
+        `;
+        
+        preview.innerHTML = html;
+        
+        // Add print-specific styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .report-content {
+                font-family: 'Segoe UI', Arial, sans-serif;
+                color: #333;
+                line-height: 1.6;
+            }
+            .report-header {
+                text-align: center;
+                margin-bottom: 40px;
+                padding-bottom: 20px;
+                border-bottom: 2px solid #333;
+            }
+            .report-header h1 {
+                font-size: 24px;
+                margin-bottom: 10px;
+                color: #333;
+            }
+            .report-subtitle {
+                font-size: 14px;
+                color: #666;
+                margin-bottom: 10px;
+            }
+            .report-meta {
+                font-size: 12px;
+                color: #888;
+            }
+            .report-section {
+                margin-bottom: 30px;
+                page-break-inside: avoid;
+            }
+            .report-section h2 {
+                font-size: 18px;
+                margin-bottom: 15px;
+                color: #333;
+                background: #f5f5f5;
+                padding: 10px;
+                border-left: 4px solid #00d4ff;
+            }
+            .report-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 10px 0;
+            }
+            .report-table td {
+                padding: 8px;
+                border-bottom: 1px solid #eee;
+            }
+            .report-table.detailed {
+                font-size: 12px;
+            }
+            .report-table.detailed th {
+                background: #f5f5f5;
+                padding: 10px;
+                text-align: left;
+                font-weight: 600;
+            }
+            .report-table.detailed td {
+                padding: 8px 10px;
+            }
+            .financial-summary {
+                display: flex;
+                justify-content: space-between;
+                margin: 20px 0;
+            }
+            .summary-item {
+                text-align: center;
+                padding: 15px;
+                background: #f9f9f9;
+                border-radius: 8px;
+                flex: 1;
+                margin: 0 10px;
+            }
+            .summary-value {
+                font-size: 20px;
+                font-weight: bold;
+                color: #00d4ff;
+                margin: 10px 0;
+            }
+            .address-columns {
+                display: flex;
+                gap: 30px;
+            }
+            .address-column {
+                flex: 1;
+            }
+            .address-column h3 {
+                font-size: 16px;
+                margin-bottom: 10px;
+                color: #666;
+            }
+            .observations p {
+                padding: 8px;
+                background: #f9f9f9;
+                border-left: 3px solid #9d4edd;
+                margin: 5px 0;
+            }
+            .report-footer {
+                text-align: center;
+                margin-top: 50px;
+                padding-top: 20px;
+                border-top: 1px solid #ddd;
+                color: #888;
+                font-size: 12px;
+            }
+            @media print {
+                .address-columns {
+                    display: block;
+                }
+                .financial-summary {
+                    display: block;
+                }
+                .summary-item {
+                    margin: 10px 0;
+                }
+            }
+        `;
+        
+        preview.appendChild(style);
+    }
+    
+    generateAddressTable(address) {
+        if (!address) return '<tr><td colspan="2">Não informado</td></tr>';
+        
+        return `
+            <tr><td><strong>Logradouro:</strong></td><td>${address.logradouro || 'Não informado'}</td></tr>
+            <tr><td><strong>Número:</strong></td><td>${address.numero || 'Não informado'}</td></tr>
+            <tr><td><strong>Complemento:</strong></td><td>${address.complemento || 'Não informado'}</td></tr>
+            <tr><td><strong>Bairro:</strong></td><td>${address.bairro || 'Não informado'}</td></tr>
+            <tr><td><strong>Cidade/UF:</strong></td><td>${address.cidade || 'Não informado'}/${address.uf || 'Não informado'}</td></tr>
+        `;
+    }
+    
+    exportPDF() {
+        window.print();
+    }
+    
+    backupData() {
+        const dataStr = JSON.stringify(this.state, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        
+        const exportFileDefaultName = `backup-mei-${new Date().getTime()}.json`;
+        
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+    }
+    
+    clearData() {
+        if (confirm('Esta ação irá remover TODOS os dados salvos. Continuar?')) {
+            localStorage.removeItem('meiAssistantState');
+            this.state = {
+                identification: {},
+                address: {},
+                activity: {},
+                revenues: [],
+                expenses: [],
+                assets: [],
+                currentSection: 'home'
+            };
+            
+            // Clear form
+            document.querySelectorAll('.form-input').forEach(input => {
+                if (input.type !== 'button' && input.type !== 'submit') {
+                    input.value = '';
+                }
+            });
+            
+            document.querySelectorAll('select').forEach(select => {
+                select.selectedIndex = 0;
+            });
+            
+            document.getElementById('same-address-toggle').checked = false;
+            this.toggleSameAddress(false);
+            
+            this.updateRevenuesList();
+            this.updateExpensesList();
+            this.updateAssetsList();
+            this.updateProgress();
+            this.navigateTo('home');
+        }
+    }
+    
+    setupPrintStyles() {
+        const style = document.createElement('style');
+        style.textContent = `
+            @media print {
+                body * {
+                    visibility: hidden;
+                }
+                .report-preview,
+                .report-preview * {
+                    visibility: visible;
+                }
+                .report-preview {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    background: white;
+                    color: black;
+                }
+                button, .form-actions, .navigation, .header, .footer {
+                    display: none !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+// Initialize the application when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new MEIAssistant();
+});
