@@ -2622,7 +2622,734 @@ class MEIAssistant {
     }
     
     exportPDF() {
-        window.print();
+        // Criar uma janela temporária para gerar o PDF
+        const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+            alert('Permita pop-ups para gerar o PDF.');
+            return;
+        }
+
+        const now = new Date();
+        const generatedDate = now.toLocaleDateString('pt-BR');
+        const generatedTime = now.toLocaleTimeString('pt-BR');
+        const sim = this.state.simulation;
+        const lucroMEI = Math.max(0, this.state.totalRevenueMEI - this.state.totalExpensesMEI);
+
+        // Gerar conteúdo HTML otimizado para PDF
+        let html = `
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Relatório Fiscal MEI - ${generatedDate}</title>
+            <style>
+                /* Estilos otimizados para PDF */
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                
+                body {
+                    font-family: 'Arial', sans-serif;
+                    color: #333;
+                    line-height: 1.4;
+                    font-size: 12pt;
+                    padding: 20px;
+                    background: white;
+                }
+                
+                .pdf-container {
+                    max-width: 210mm;
+                    margin: 0 auto;
+                }
+                
+                /* Cabeçalho */
+                .pdf-header {
+                    text-align: center;
+                    margin-bottom: 30px;
+                    padding-bottom: 20px;
+                    border-bottom: 3px solid #0066cc;
+                }
+                
+                .pdf-header h1 {
+                    color: #0066cc;
+                    font-size: 24px;
+                    margin-bottom: 10px;
+                    font-weight: bold;
+                }
+                
+                .pdf-subtitle {
+                    color: #666;
+                    font-size: 14px;
+                    margin-bottom: 15px;
+                }
+                
+                .header-info {
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 11px;
+                    color: #555;
+                    margin-top: 20px;
+                    padding-top: 10px;
+                    border-top: 1px solid #ddd;
+                }
+                
+                /* Seções */
+                .pdf-section {
+                    margin-bottom: 25px;
+                    page-break-inside: avoid;
+                }
+                
+                .pdf-section h2 {
+                    color: #0066cc;
+                    font-size: 16px;
+                    margin-bottom: 15px;
+                    padding-bottom: 5px;
+                    border-bottom: 2px solid #0066cc;
+                    font-weight: bold;
+                }
+                
+                /* Grid de informações */
+                .info-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 10px;
+                    margin: 15px 0;
+                }
+                
+                .info-item {
+                    padding: 8px;
+                    background: #f8f9fa;
+                    border-radius: 4px;
+                    border-left: 3px solid #0066cc;
+                }
+                
+                .info-item strong {
+                    display: block;
+                    color: #555;
+                    font-size: 11px;
+                    margin-bottom: 3px;
+                }
+                
+                .info-item span {
+                    color: #222;
+                    font-size: 12px;
+                }
+                
+                /* Tabelas */
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 15px 0;
+                    font-size: 11px;
+                }
+                
+                th {
+                    background: #0066cc;
+                    color: white;
+                    padding: 8px;
+                    text-align: left;
+                    font-weight: bold;
+                    border: 1px solid #0055aa;
+                }
+                
+                td {
+                    padding: 8px;
+                    border: 1px solid #ddd;
+                }
+                
+                tr:nth-child(even) {
+                    background: #f9f9f9;
+                }
+                
+                /* Sumários financeiros */
+                .financial-summary {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                    gap: 15px;
+                    margin: 20px 0;
+                }
+                
+                .summary-item {
+                    text-align: center;
+                    padding: 15px;
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    border: 1px solid #ddd;
+                }
+                
+                .summary-item h3 {
+                    font-size: 12px;
+                    color: #555;
+                    margin-bottom: 10px;
+                }
+                
+                .summary-value {
+                    font-size: 20px;
+                    font-weight: bold;
+                    color: #0066cc;
+                    margin: 10px 0;
+                }
+                
+                .summary-detail {
+                    font-size: 10px;
+                    color: #777;
+                }
+                
+                /* Simulação */
+                .simulation-item {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 8px 0;
+                    border-bottom: 1px solid #eee;
+                }
+                
+                .simulation-item.total {
+                    border-top: 2px solid #0066cc;
+                    border-bottom: none;
+                    margin-top: 10px;
+                    padding-top: 15px;
+                    font-weight: bold;
+                }
+                
+                .sim-label {
+                    color: #555;
+                }
+                
+                .sim-value {
+                    color: #222;
+                    font-weight: 500;
+                }
+                
+                /* Observações */
+                .observations {
+                    background: #fff8e1;
+                    padding: 20px;
+                    border-radius: 8px;
+                    border-left: 4px solid #ff9800;
+                    margin: 25px 0;
+                    font-size: 11px;
+                }
+                
+                .observations p {
+                    margin: 8px 0;
+                    padding-left: 15px;
+                    position: relative;
+                }
+                
+                .observations p::before {
+                    content: "•";
+                    position: absolute;
+                    left: 0;
+                    color: #ff9800;
+                    font-size: 16px;
+                }
+                
+                /* Rodapé */
+                .pdf-footer {
+                    text-align: center;
+                    margin-top: 50px;
+                    padding-top: 20px;
+                    border-top: 2px solid #ddd;
+                    color: #777;
+                    font-size: 10px;
+                }
+                
+                .footer-note {
+                    font-style: italic;
+                    margin: 10px 0;
+                }
+                
+                .footer-company {
+                    margin-top: 15px;
+                    color: #555;
+                    font-weight: 500;
+                }
+                
+                /* Quebras de página */
+                @media print {
+                    body {
+                        padding: 15mm;
+                    }
+                    
+                    .page-break {
+                        page-break-before: always;
+                    }
+                    
+                    .no-print {
+                        display: none;
+                    }
+                    
+                    .pdf-section {
+                        page-break-inside: avoid;
+                        page-break-after: auto;
+                    }
+                    
+                    table {
+                        page-break-inside: avoid;
+                    }
+                }
+                
+                /* Utilitários */
+                .text-center {
+                    text-align: center;
+                }
+                
+                .text-right {
+                    text-align: right;
+                }
+                
+                .mt-20 {
+                    margin-top: 20px;
+                }
+                
+                .mb-20 {
+                    margin-bottom: 20px;
+                }
+                
+                .color-success {
+                    color: #28a745;
+                }
+                
+                .color-warning {
+                    color: #ffc107;
+                }
+                
+                .color-error {
+                    color: #dc3545;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="pdf-container">
+                <header class="pdf-header">
+                    <h1>RELATÓRIO FISCAL COMPLETO - MEI</h1>
+                    <p class="pdf-subtitle">Simulação IRPF ${new Date().getFullYear()} - Microempreendedor Individual</p>
+                    <div class="header-info">
+                        <div>
+                            <strong>Data:</strong> ${generatedDate}<br>
+                            <strong>Hora:</strong> ${generatedTime}
+                        </div>
+                        <div>
+                            <strong>Página:</strong> 1<br>
+                            <strong>Versão:</strong> 1.0
+                        </div>
+                    </div>
+                </header>
+                
+                <div class="pdf-section">
+                    <h2>📋 IDENTIFICAÇÃO DO CONTRIBUINTE</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <strong>Nome:</strong>
+                            <span>${this.state.identification.nome || 'Não informado'}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>CPF:</strong>
+                            <span>${this.state.identification.cpf || 'Não informado'}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Data Nascimento:</strong>
+                            <span>${this.formatDate(this.state.identification.dataNascimento) || 'Não informado'}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>CNPJ MEI:</strong>
+                            <span>${this.state.identification.cnpj || 'Não informado'}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Data Abertura MEI:</strong>
+                            <span>${this.formatDate(this.state.identification.dataAbertura) || 'Não informado'}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pdf-section">
+                    <h2>📍 ENDEREÇO</h2>
+        `;
+        
+        // Endereço
+        if (this.state.address.sameAddress) {
+            html += `
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <strong>Status:</strong>
+                            <span>Home Office</span>
+                        </div>
+                        ${this.generatePDFAddressInfo(this.state.address.residential)}
+                    </div>
+            `;
+        } else {
+            html += `
+                    <div class="info-grid">
+                        ${this.generatePDFAddressInfo(this.state.address.residential, 'Residencial')}
+                    </div>
+                    <div class="info-grid mt-20">
+                        ${this.generatePDFAddressInfo(this.state.address.fiscal, 'Fiscal')}
+                    </div>
+            `;
+        }
+        
+        // Home Office
+        if (this.state.address.homeOffice && this.state.address.homeOffice.areaTotal > 0) {
+            const ho = this.state.address.homeOffice;
+            const percentual = ho.areaEscritorio / ho.areaTotal;
+            const percentualLimitado = Math.min(percentual, this.CONSTANTS.PERCENTUAL_HOME_OFFICE);
+            
+            html += `
+                <div class="pdf-section">
+                    <h2>🏠 HOME OFFICE</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <strong>Área Total:</strong>
+                            <span>${ho.areaTotal} m²</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Área Escritório:</strong>
+                            <span>${ho.areaEscritorio} m²</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Percentual:</strong>
+                            <span>${(percentual * 100).toFixed(1)}%</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Dedução Anual:</strong>
+                            <span>${this.formatCurrency(this.state.deductions.homeOffice)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Atividade MEI
+        html += `
+                <div class="pdf-section">
+                    <h2>🏢 ATIVIDADE ECONÔMICA MEI</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <strong>CNAE:</strong>
+                            <span>${this.state.activity.cnae || 'Não informado'}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Tipo de Atividade:</strong>
+                            <span>${this.state.activity.tipoAtividade || 'Não informado'}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Alíquota DAS:</strong>
+                            <span>${this.state.activity.aliquotaDas || '0'}%</span>
+                        </div>
+                        <div class="info-item" style="grid-column: span 2;">
+                            <strong>Descrição:</strong>
+                            <span>${this.state.activity.descricaoAtividade || 'Não informado'}</span>
+                        </div>
+                    </div>
+                </div>
+        `;
+        
+        // Resumo Financeiro
+        html += `
+                <div class="pdf-section">
+                    <h2>💰 RESUMO FINANCEIRO</h2>
+                    <div class="financial-summary">
+                        <div class="summary-item">
+                            <h3>Receitas MEI</h3>
+                            <p class="summary-value">${this.formatCurrency(this.state.totalRevenueMEI)}</p>
+                            <p class="summary-detail">${this.state.revenues.length} lançamentos</p>
+                        </div>
+                        <div class="summary-item">
+                            <h3>Despesas MEI</h3>
+                            <p class="summary-value">${this.formatCurrency(this.state.totalExpensesMEI)}</p>
+                            <p class="summary-detail">${this.state.expenses.length} lançamentos</p>
+                        </div>
+                        <div class="summary-item">
+                            <h3>Lucro MEI</h3>
+                            <p class="summary-value">${this.formatCurrency(lucroMEI)}</p>
+                            <p class="summary-detail">Receitas - Despesas</p>
+                        </div>
+                        <div class="summary-item">
+                            <h3>DAS Anual</h3>
+                            <p class="summary-value">${this.formatCurrency(this.state.DASAnual)}</p>
+                            <p class="summary-detail">Pagamento mensal</p>
+                        </div>
+                    </div>
+                </div>
+        `;
+        
+        // Outras Rendas
+        html += `
+                <div class="pdf-section">
+                    <h2>💼 OUTRAS FONTES DE RENDA</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Valor Anual</th>
+                                <th>Detalhes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Salário/Pró-labore</td>
+                                <td>${this.formatCurrency(this.state.otherIncome.salario.anual)}</td>
+                                <td>${this.state.otherIncome.salario.meses} meses</td>
+                            </tr>
+                            <tr>
+                                <td>Aluguéis</td>
+                                <td>${this.formatCurrency(this.state.otherIncome.alugueis.anual)}</td>
+                                <td>${this.state.otherIncome.alugueis.meses} meses</td>
+                            </tr>
+                            <tr>
+                                <td>Investimentos</td>
+                                <td>${this.formatCurrency(
+                                    this.state.otherIncome.investimentos.jurosCapital +
+                                    this.state.otherIncome.investimentos.rendimentosAcoes +
+                                    this.state.otherIncome.investimentos.rendimentosFIIs
+                                )}</td>
+                                <td>Juros, ações e FIIs</td>
+                            </tr>
+                            <tr style="font-weight: bold; background: #e8f4ff;">
+                                <td>TOTAL</td>
+                                <td>${this.formatCurrency(this.state.totalOtherIncome)}</td>
+                                <td>Soma de todas as fontes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+        `;
+        
+        // Deduções
+        html += `
+                <div class="pdf-section">
+                    <h2>🧾 DEDUÇÕES IRPF</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Valor</th>
+                                <th>Detalhes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Dependentes</td>
+                                <td>${this.formatCurrency(this.state.deductions.dependentes.total)}</td>
+                                <td>${this.state.deductions.dependentes.quantidade} dependente(s)</td>
+                            </tr>
+                            <tr>
+                                <td>Saúde</td>
+                                <td>${this.formatCurrency(this.state.deductions.saude.total)}</td>
+                                <td>Médicos, medicamentos, plano</td>
+                            </tr>
+                            <tr>
+                                <td>Educação</td>
+                                <td>${this.formatCurrency(this.state.deductions.educacao.total)}</td>
+                                <td>Faculdade, escola, cursos</td>
+                            </tr>
+                            <tr>
+                                <td>Previdência/Doações</td>
+                                <td>${this.formatCurrency(this.state.deductions.previdenciaDoacoes.total)}</td>
+                                <td>INSS, PGBL, doações, pensão</td>
+                            </tr>
+                            <tr>
+                                <td>Home Office</td>
+                                <td>${this.formatCurrency(this.state.deductions.homeOffice)}</td>
+                                <td>Dedução proporcional</td>
+                            </tr>
+                            <tr style="font-weight: bold; background: #e8f4ff;">
+                                <td>TOTAL DEDUÇÕES</td>
+                                <td>${this.formatCurrency(this.state.deductions.totalDeducoes)}</td>
+                                <td>Soma de todas as deduções</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+        `;
+        
+        // Simulação IRPF
+        html += `
+                <div class="pdf-section">
+                    <h2>📈 SIMULAÇÃO IRPF 2026</h2>
+                    
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                        <div class="simulation-item">
+                            <span class="sim-label">Lucro MEI:</span>
+                            <span class="sim-value">${this.formatCurrency(lucroMEI)}</span>
+                        </div>
+                        <div class="simulation-item">
+                            <span class="sim-label">(+) Outras Rendas:</span>
+                            <span class="sim-value">${this.formatCurrency(this.state.totalOtherIncome)}</span>
+                        </div>
+                        <div class="simulation-item total">
+                            <span class="sim-label">(=) Renda Bruta Total:</span>
+                            <span class="sim-value">${this.formatCurrency(sim.rendaBrutaTotal)}</span>
+                        </div>
+                        <div class="simulation-item">
+                            <span class="sim-label">(-) Deduções Totais:</span>
+                            <span class="sim-value">${this.formatCurrency(sim.deducoesTotais)}</span>
+                        </div>
+                        <div class="simulation-item">
+                            <span class="sim-label">(-) Dedução Padrão:</span>
+                            <span class="sim-value">${this.formatCurrency(this.CONSTANTS.DEDUCAO_PADRAO)}</span>
+                        </div>
+                        <div class="simulation-item total">
+                            <span class="sim-label">(=) Base de Cálculo IRPF:</span>
+                            <span class="sim-value">${this.formatCurrency(sim.baseCalculo)}</span>
+                        </div>
+                    </div>
+                    
+                    <h3 style="font-size: 14px; margin: 20px 0 10px 0;">Cálculo por Faixas</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Faixa de Renda</th>
+                                <th>Alíquota</th>
+                                <th>Valor na Faixa</th>
+                                <th>Imposto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+        `;
+        
+        // Adicionar faixas
+        for (let i = 0; i < sim.brackets.length; i++) {
+            const bracket = sim.brackets[i];
+            const prevMax = i > 0 ? sim.brackets[i-1].max : 0;
+            const range = i === 0 ? `Até ${this.formatCurrency(bracket.max)}` : 
+                         `${this.formatCurrency(prevMax)} a ${this.formatCurrency(bracket.max)}`;
+            
+            html += `
+                            <tr>
+                                <td>${range}</td>
+                                <td>${bracket.rate}%</td>
+                                <td>${this.formatCurrency(bracket.income)}</td>
+                                <td>${this.formatCurrency(bracket.tax)}</td>
+                            </tr>
+            `;
+        }
+        
+        html += `
+                        </tbody>
+                        <tfoot>
+                            <tr style="font-weight: bold; background: #d4edda;">
+                                <td colspan="3">IMPOSTO TOTAL DEVIDO:</td>
+                                <td>${this.formatCurrency(sim.impostoDevido)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0;">
+                        <div style="padding: 15px; background: #e8f4ff; border-radius: 8px;">
+                            <div style="font-size: 11px; color: #555; margin-bottom: 5px;">Situação Fiscal</div>
+                            <div style="font-size: 16px; font-weight: bold; color: #0066cc;">${sim.situacaoFiscal}</div>
+                        </div>
+                        <div style="padding: 15px; background: #e8f4ff; border-radius: 8px;">
+                            <div style="font-size: 11px; color: #555; margin-bottom: 5px;">Declaração IRPF</div>
+                            <div style="font-size: 16px; font-weight: bold; color: ${sim.declaracaoObrigatoria ? '#ff9800' : '#28a745'};">${sim.declaracaoObrigatoria ? 'OBRIGATÓRIA' : 'NÃO OBRIGATÓRIA'}</div>
+                        </div>
+                        <div style="padding: 15px; background: #e8f4ff; border-radius: 8px;">
+                            <div style="font-size: 11px; color: #555; margin-bottom: 5px;">Alíquota Efetiva</div>
+                            <div style="font-size: 16px; font-weight: bold; color: #0066cc;">${sim.aliquotaEfetiva.toFixed(2)}%</div>
+                        </div>
+                        <div style="padding: 15px; background: #e8f4ff; border-radius: 8px;">
+                            <div style="font-size: 11px; color: #555; margin-bottom: 5px;">Base de Cálculo</div>
+                            <div style="font-size: 16px; font-weight: bold; color: #0066cc;">${this.formatCurrency(sim.baseCalculo)}</div>
+                        </div>
+                    </div>
+                </div>
+        `;
+        
+        // Observações
+        html += `
+                <div class="pdf-section">
+                    <h2>⚖️ OBSERVAÇÕES FISCAIS</h2>
+                    <div class="observations">
+                        <p><strong>Este é um relatório de simulação fiscal.</strong> Não substitui a declaração oficial nem o trabalho de um contador.</p>
+                        <p><strong>MEI é isento de IRPJ</strong> (Imposto de Renda Pessoa Jurídica) pelo Simples Nacional.</p>
+                        <p><strong>IRPF é devido</strong> apenas se a renda tributável ultrapassar R$ ${this.formatNumber(this.CONSTANTS.LIMITE_ISENCAO_IRPF)}/ano.</p>
+                        <p><strong>Limite MEI:</strong> R$ ${this.formatNumber(this.CONSTANTS.LIMITE_FATURAMENTO_MEI)} de faturamento anual.</p>
+                        <p><strong>Home Office:</strong> Até ${(this.CONSTANTS.PERCENTUAL_HOME_OFFICE * 100)}% das despesas podem ser deduzidas.</p>
+                        <p><strong>Consulte um contador</strong> para validação final, declaração e orientações específicas.</p>
+                    </div>
+                </div>
+                
+                <footer class="pdf-footer">
+                    <p>--- FIM DO RELATÓRIO ---</p>
+                    <p class="footer-note">Gerado pelo Assistente Fiscal MEI - Simulador Completo de Impostos</p>
+                    <p class="footer-company">S&Q TECNOLOGIA DA INFORMACAO LTDA | CNPJ: 64.684.955/0001-98</p>
+                    <p>Gerado em: ${generatedDate} às ${generatedTime}</p>
+                </footer>
+            </div>
+        </body>
+        </html>
+        `;
+
+        // Escrever no documento da nova janela
+        printWindow.document.write(html);
+        printWindow.document.close();
+
+        // Aguardar o conteúdo carregar e imprimir
+        setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+        }, 500);
+    }
+    
+    // Adicione esta função auxiliar para gerar endereços no PDF
+    generatePDFAddressInfo(address, tipo = '') {
+        if (!address) return '';
+        
+        let prefix = tipo ? `${tipo}: ` : '';
+        
+        return `
+            <div class="info-item">
+                <strong>${prefix}Logradouro</strong>
+                <span>${address.logradouro || '-'}</span>
+            </div>
+            <div class="info-item">
+                <strong>${prefix}Número</strong>
+                <span>${address.numero || '-'}</span>
+            </div>
+            <div class="info-item">
+                <strong>${prefix}Complemento</strong>
+                <span>${address.complemento || '-'}</span>
+            </div>
+            <div class="info-item">
+                <strong>${prefix}Bairro</strong>
+                <span>${address.bairro || '-'}</span>
+            </div>
+            <div class="info-item">
+                <strong>${prefix}Cidade/UF</strong>
+                <span>${address.cidade || '-'}/${address.uf || '-'}</span>
+            </div>
+            <div class="info-item">
+                <strong>${prefix}CEP</strong>
+                <span>${address.cep || '-'}</span>
+            </div>
+        `;
+    }
+    
+    // Funções auxiliares de formatação (certifique-se de que existam)
+    formatCurrency(value) {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(value || 0);
+    }
+    
+    formatNumber(value) {
+        return new Intl.NumberFormat('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(value || 0);
+    }
+    
+    formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('pt-BR');
     }
     
     exportSimulationData() {
@@ -2891,3 +3618,4 @@ document.addEventListener('DOMContentLoaded', () => {
     const assistant = new MEIAssistant();
     window.meiAssistant = assistant; // Para debug
 });
+
