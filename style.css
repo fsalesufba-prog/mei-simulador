@@ -724,7 +724,7 @@ input:checked + .toggle-slider::before {
     justify-content: space-between;
     align-items: center;
     padding: 15px;
-    background: rgba(255, 255, 255, 0.05);
+    background: #000000;
     border-radius: 10px;
 }
 
@@ -1452,3 +1452,4 @@ input:checked + .toggle-slider::before {
     margin-bottom: 10px;
     padding-left: 10px;
 }
+
