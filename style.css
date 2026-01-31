@@ -363,6 +363,13 @@ body {
     min-height: 20px;
 }
 
+.hint {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 5px;
+    font-style: italic;
+}
+
 /* Info Cards */
 .info-card {
     background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(157, 78, 221, 0.1));
@@ -378,29 +385,54 @@ body {
     color: var(--primary);
 }
 
-.rules-grid {
+.warning-box {
+    background: linear-gradient(135deg, rgba(255, 170, 0, 0.1), rgba(255, 55, 95, 0.1));
+    border: 1px solid var(--warning);
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 30px;
+}
+
+.warning-box h4 {
+    color: var(--warning);
+    margin-bottom: 15px;
+}
+
+.rules-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-top: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
 }
 
-.rule-item {
+.rule-card {
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 25px;
 }
 
-.rule-item strong {
-    display: block;
-    color: var(--text);
-    margin-bottom: 5px;
-    font-size: 0.9rem;
+.rule-card h4 {
+    color: var(--primary);
+    margin-bottom: 15px;
 }
 
-.rule-item p {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
+.rule-card ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.rule-card li {
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.rule-card li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--primary);
 }
 
 /* Address Section */
@@ -476,6 +508,40 @@ input:checked + .toggle-slider::before {
     border-bottom: 1px solid var(--border);
 }
 
+/* Home Office Section */
+.home-office-deduction {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(157, 78, 221, 0.05));
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 40px;
+}
+
+.home-office-deduction h3 {
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+.deduction-preview {
+    background: rgba(0, 212, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.preview-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 15px 0;
+}
+
+.preview-note {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
 /* Summary Cards */
 .summary-card {
     background: var(--surface-light);
@@ -499,7 +565,8 @@ input:checked + .toggle-slider::before {
 
 .revenue-summary,
 .expenses-summary,
-.assets-summary {
+.assets-summary,
+.income-summary {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
@@ -539,7 +606,7 @@ input:checked + .toggle-slider::before {
 
 .list-header {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
     gap: 20px;
     padding: 15px 25px;
     background: rgba(0, 0, 0, 0.2);
@@ -556,7 +623,7 @@ input:checked + .toggle-slider::before {
 
 .list-item {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
     gap: 20px;
     padding: 15px;
     border-bottom: 1px solid var(--border);
@@ -572,6 +639,109 @@ input:checked + .toggle-slider::before {
     color: var(--text-secondary);
     padding: 40px;
     font-style: italic;
+}
+
+/* Income Categories */
+.income-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.income-category {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 25px;
+}
+
+.income-category h3 {
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+.calculated-value {
+    background: rgba(0, 212, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.calculated-value strong {
+    color: var(--text);
+    margin-right: 10px;
+}
+
+.calculated-value span {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+/* Deductions */
+.deductions-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.deduction-category {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 25px;
+}
+
+.deduction-category h3 {
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+.deductions-summary {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(157, 78, 221, 0.1));
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 40px;
+}
+
+.deductions-summary h3 {
+    margin-bottom: 25px;
+    color: var(--primary);
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.summary-item.total {
+    background: rgba(0, 212, 255, 0.2);
+    font-weight: 700;
+}
+
+.summary-label {
+    color: var(--text);
+    font-weight: 500;
+}
+
+.summary-value {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 1.1rem;
 }
 
 /* Buttons */
@@ -634,6 +804,7 @@ input:checked + .toggle-slider::before {
     gap: 15px;
     margin-bottom: 30px;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .simulation-results {
@@ -664,6 +835,12 @@ input:checked + .toggle-slider::before {
     font-size: 1.2rem;
     margin-bottom: 20px;
     color: var(--primary);
+}
+
+.simulation-card h4 {
+    font-size: 1rem;
+    margin: 20px 0 15px 0;
+    color: var(--text-secondary);
 }
 
 .simulation-grid {
@@ -703,6 +880,7 @@ input:checked + .toggle-slider::before {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    margin-top: 20px;
 }
 
 .bracket {
@@ -771,35 +949,28 @@ input:checked + .toggle-slider::before {
     color: var(--secondary);
 }
 
-.simulation-notes {
-    background: rgba(255, 170, 0, 0.05);
-    border: 1px solid rgba(255, 170, 0, 0.3);
+.what-if-controls {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.simulation-details {
+    background: var(--surface-light);
+    border: 1px solid var(--border);
     border-radius: 15px;
     padding: 25px;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
 }
 
-.simulation-notes h4 {
-    color: var(--warning);
-    margin-bottom: 15px;
+.simulation-details h3 {
+    margin-bottom: 20px;
+    color: var(--primary);
 }
 
-.simulation-notes ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.simulation-notes li {
-    margin-bottom: 10px;
-    padding-left: 20px;
-    position: relative;
-}
-
-.simulation-notes li::before {
-    content: "•";
-    position: absolute;
-    left: 0;
-    color: var(--warning);
+.details-content {
+    font-size: 0.9rem;
+    line-height: 1.6;
 }
 
 /* Validation */
@@ -1126,15 +1297,28 @@ input:checked + .toggle-slider::before {
         gap: 20px;
     }
     
-    .rules-grid {
+    .rules-container {
         grid-template-columns: 1fr;
     }
     
     .revenue-summary,
     .expenses-summary,
-    .assets-summary {
-        grid-template-columns: 1fr;
+    .assets-summary,
+    .income-summary {
+        grid-template-columns: repeat(2, 1fr);
         gap: 15px;
+    }
+    
+    .summary-value {
+        font-size: 1.5rem;
+    }
+    
+    .deductions-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .summary-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -1152,7 +1336,10 @@ input:checked + .toggle-slider::before {
     }
     
     .header, .navigation, .footer, .form-actions, 
-    button, .report-controls, .simulation-controls {
+    button, .report-controls, .simulation-controls,
+    .what-if-scenario, .validation-container,
+    .home-office-deduction, .rules-container,
+    .income-categories, .deductions-container {
         display: none !important;
     }
     
@@ -1208,4 +1395,60 @@ input:checked + .toggle-slider::before {
     border-radius: 5px;
     font-size: 14px;
     z-index: 10000;
+}
+
+/* Depreciation info */
+.depreciation-info {
+    background: rgba(255, 170, 0, 0.05);
+    border: 1px solid rgba(255, 170, 0, 0.3);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.depreciation-info h4 {
+    color: var(--warning);
+    margin-bottom: 15px;
+}
+
+.depreciation-info ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.depreciation-info li {
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.depreciation-info li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--warning);
+}
+
+/* Instructions */
+.instructions {
+    background: var(--surface-light);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 30px;
+    margin-top: 30px;
+}
+
+.instructions h3 {
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+.instructions ol {
+    padding-left: 20px;
+    margin-bottom: 25px;
+}
+
+.instructions li {
+    margin-bottom: 10px;
+    padding-left: 10px;
 }
