@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assistente Fiscal MEI | Organizador Pré-Declaração</title>
+    <title>Simulador Fiscal MEI | IRPF Completo 2026</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,7 @@
             <div class="logo">
                 <div class="logo-glow"></div>
                 <h1>MEI<span>FISCAL</span></h1>
-                <p class="subtitle">Simulador Fiscal Completo - MEI & IRPF</p>
+                <p class="subtitle">Simulador IRPF Completo para Microempreendedor</p>
             </div>
             <div class="year-badge">
                 <span id="current-year">2026</span>
@@ -26,10 +26,11 @@
                 <li><button class="nav-btn active" data-section="home">🏠 Início</button></li>
                 <li><button class="nav-btn" data-section="identification">👤 Identificação</button></li>
                 <li><button class="nav-btn" data-section="address">📍 Endereço</button></li>
-                <li><button class="nav-btn" data-section="activity">🏢 Atividade</button></li>
-                <li><button class="nav-btn" data-section="revenue">💰 Receitas</button></li>
-                <li><button class="nav-btn" data-section="expenses">📉 Despesas</button></li>
-                <li><button class="nav-btn" data-section="assets">🏠 Bens</button></li>
+                <li><button class="nav-btn" data-section="activity">🏢 Atividade MEI</button></li>
+                <li><button class="nav-btn" data-section="mei-revenue">💰 Receitas MEI</button></li>
+                <li><button class="nav-btn" data-section="mei-expenses">📉 Despesas MEI</button></li>
+                <li><button class="nav-btn" data-section="other-income">💼 Outras Rendas PF</button></li>
+                <li><button class="nav-btn" data-section="deductions">🧾 Deduções IRPF</button></li>
                 <li><button class="nav-btn" data-section="simulation">🧮 Simulação IR</button></li>
                 <li><button class="nav-btn" data-section="validation">✅ Validação</button></li>
                 <li><button class="nav-btn" data-section="report">📊 Relatório</button></li>
@@ -41,14 +42,14 @@
         <main class="main-content">
             <section class="section active" id="home-section">
                 <div class="section-header">
-                    <h2>Assistente Fiscal MEI</h2>
-                    <p class="section-subtitle">Simulação completa de impostos para Microempreendedor Individual</p>
+                    <h2>Simulador IRPF para MEI</h2>
+                    <p class="section-subtitle">Cálculo completo do Imposto de Renda Pessoa Física com todas as deduções</p>
                 </div>
                 <div class="dashboard">
                     <div class="dashboard-card glow">
                         <div class="card-icon">⚡</div>
-                        <h3>Simulação IR</h3>
-                        <p>Calcule impostos sobre renda e entenda sua situação fiscal.</p>
+                        <h3>Simulação Completa</h3>
+                        <p>IRPF com todas deduções legais para MEI. Inclui home office, dependentes, saúde, etc.</p>
                         <button class="btn-primary" data-section="simulation">Simular Agora</button>
                     </div>
                     <div class="dashboard-card glow">
@@ -62,31 +63,36 @@
                     <div class="dashboard-card glow">
                         <div class="card-icon">🔒</div>
                         <h3>100% Offline</h3>
-                        <p>Dados armazenados localmente. Zero transmissão.</p>
+                        <p>Todos dados salvos localmente. Nenhuma transmissão.</p>
                     </div>
                 </div>
                 <div class="instructions">
-                    <h3>📋 Funcionalidades do Sistema:</h3>
-                    <ul>
-                        <li><strong>Simulação IRPF para MEI</strong> - Cálculo de impostos sobre renda</li>
-                        <li><strong>Organização Fiscal Completa</strong> - Todos os dados para declaração</li>
-                        <li><strong>Separação PF/PJ</strong> - Identificação clara dos regimes</li>
-                        <li><strong>Limites do MEI</strong> - Alertas de faturamento e despesas</li>
-                        <li><strong>Relatório Profissional</strong> - Documento pronto para contador</li>
-                        <li><strong>Simulação "E se"</strong> - Teste diferentes cenários fiscais</li>
-                    </ul>
+                    <h3>📋 Como funciona a simulação IRPF para MEI:</h3>
+                    <ol>
+                        <li><strong>Separação PF/PJ</strong> - Você é MEI (PJ) mas declara IR como PF</li>
+                        <li><strong>Receitas MEI</strong> - Tudo que sua empresa faturou</li>
+                        <li><strong>Despesas MEI</strong> - Custos da empresa (inclusive home office)</li>
+                        <li><strong>Outras Rendas PF</strong> - Salários, aluguéis, investimentos</li>
+                        <li><strong>Deduções IRPF</strong> - Dependentes, saúde, educação, previdência</li>
+                        <li><strong>Cálculo</strong> - Sistema aplica todas as regras da Receita Federal</li>
+                    </ol>
+                    <div class="warning-box">
+                        <h4>⚠️ Atenção Importante</h4>
+                        <p>Como MEI, você é <strong>isento de IRPJ</strong> (Imposto de Renda Pessoa Jurídica).</p>
+                        <p>Mas deve declarar <strong>IRPF</strong> sobre seus rendimentos totais, incluindo os do MEI.</p>
+                    </div>
                 </div>
             </section>
 
             <section class="section" id="identification-section">
                 <div class="section-header">
-                    <h2>Identificação do MEI</h2>
-                    <p class="section-subtitle">Dados pessoais e empresariais</p>
+                    <h2>Identificação do Contribuinte</h2>
+                    <p class="section-subtitle">Dados pessoais para declaração IRPF</p>
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="nome">Nome Completo *</label>
-                        <input type="text" id="nome" class="form-input" placeholder="Seu nome completo">
+                        <input type="text" id="nome" class="form-input" placeholder="Nome completo para declaração">
                     </div>
                     <div class="form-group">
                         <label for="cpf">CPF *</label>
@@ -94,35 +100,29 @@
                         <div class="validation-message" id="cpf-validation"></div>
                     </div>
                     <div class="form-group">
+                        <label for="data-nascimento">Data de Nascimento *</label>
+                        <input type="date" id="data-nascimento" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="titulo-eleitor">Título de Eleitor</label>
+                        <input type="text" id="titulo-eleitor" class="form-input" placeholder="Número do título">
+                    </div>
+                    <div class="form-group">
                         <label for="cnpj">CNPJ MEI *</label>
                         <input type="text" id="cnpj" class="form-input" placeholder="00.000.000/0000-00" maxlength="18">
                         <div class="validation-message" id="cnpj-validation"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="ano-fiscal">Ano Fiscal *</label>
-                        <select id="ano-fiscal" class="form-input">
-                            <option value="">Selecione o ano</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="atividade">Tipo de Atividade *</label>
-                        <select id="atividade" class="form-input">
-                            <option value="">Selecione</option>
-                            <option value="comercio">Comércio</option>
-                            <option value="servico">Prestação de Serviços</option>
-                            <option value="industria">Indústria</option>
-                            <option value="misto">Misto (Comércio e Serviços)</option>
-                        </select>
                     </div>
                     <div class="form-group">
                         <label for="data-abertura">Data de Abertura do MEI *</label>
                         <input type="date" id="data-abertura" class="form-input">
                     </div>
                 </div>
+                
                 <div class="info-card">
-                    <h4>💡 Informação Importante</h4>
-                    <p>Como MEI, você é isento de IRPJ (Imposto de Renda Pessoa Jurídica), mas precisa declarar como Pessoa Física (IRPF) se ultrapassar os limites de isenção.</p>
+                    <h4>📝 Informações para Declaração</h4>
+                    <p>Estes dados são necessários para a declaração completa do IRPF. O MEI deve declarar tanto como pessoa física (CPF) quanto como pessoa jurídica (CNPJ).</p>
                 </div>
+                
                 <div class="form-actions">
                     <button class="btn-secondary" data-section="home">Voltar</button>
                     <button class="btn-primary" data-section="address">Próximo: Endereço</button>
@@ -131,15 +131,15 @@
 
             <section class="section" id="address-section">
                 <div class="section-header">
-                    <h2>Endereços</h2>
-                    <p class="section-subtitle">Residencial e Fiscal do MEI</p>
+                    <h2>Endereços e Home Office</h2>
+                    <p class="section-subtitle">Residencial, Fiscal e dedução de home office</p>
                 </div>
                 
                 <div class="address-toggle">
                     <label class="toggle-switch">
                         <input type="checkbox" id="same-address-toggle">
                         <span class="toggle-slider"></span>
-                        <span class="toggle-label">Endereço fiscal é o mesmo que o residencial</span>
+                        <span class="toggle-label">Trabalho em home office (mesmo endereço residencial e fiscal)</span>
                     </label>
                 </div>
 
@@ -147,7 +147,7 @@
                     <div class="address-column">
                         <h3 class="address-title">🏠 Endereço Residencial (PF)</h3>
                         <div class="form-group">
-                            <label for="res-cep">CEP</label>
+                            <label for="res-cep">CEP *</label>
                             <input type="text" id="res-cep" class="form-input" placeholder="00000-000" maxlength="9">
                         </div>
                         <div class="form-group">
@@ -179,9 +179,9 @@
                     </div>
 
                     <div class="address-column">
-                        <h3 class="address-title">🏢 Endereço Fiscal (PJ)</h3>
+                        <h3 class="address-title">🏢 Endereço Fiscal (PJ - MEI)</h3>
                         <div class="form-group">
-                            <label for="fis-cep">CEP</label>
+                            <label for="fis-cep">CEP *</label>
                             <input type="text" id="fis-cep" class="form-input" placeholder="00000-000" maxlength="9" disabled>
                         </div>
                         <div class="form-group">
@@ -213,66 +213,126 @@
                     </div>
                 </div>
 
-                <div class="info-card">
-                    <h4>📍 Separação PF/PJ</h4>
-                    <p>O sistema diferencia claramente entre Pessoa Física (residencial) e Pessoa Jurídica (fiscal), essencial para a declaração correta do IRPF.</p>
+                <div class="home-office-deduction" id="home-office-section">
+                    <h3>🏠 Dedução de Home Office</h3>
+                    <p class="section-subtitle">Se trabalha em casa, pode deduzir parte das despesas</p>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="area-total">Área total do imóvel (m²)</label>
+                            <input type="number" id="area-total" class="form-input" placeholder="Ex: 80">
+                        </div>
+                        <div class="form-group">
+                            <label for="area-escritorio">Área do escritório (m²)</label>
+                            <input type="number" id="area-escritorio" class="form-input" placeholder="Ex: 15">
+                        </div>
+                        <div class="form-group">
+                            <label for="aluguel-mensal">Aluguel mensal (R$)</label>
+                            <input type="number" id="aluguel-mensal" class="form-input" placeholder="0,00" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="condominio-mensal">Condomínio mensal (R$)</label>
+                            <input type="number" id="condominio-mensal" class="form-input" placeholder="0,00" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="iptu-anual">IPTU anual (R$)</label>
+                            <input type="number" id="iptu-anual" class="form-input" placeholder="0,00" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="energia-mensal">Energia elétrica mensal (R$)</label>
+                            <input type="number" id="energia-mensal" class="form-input" placeholder="0,00" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="internet-mensal">Internet mensal (R$)</label>
+                            <input type="number" id="internet-mensal" class="form-input" placeholder="0,00" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <div class="deduction-preview">
+                        <h4>📊 Estimativa de dedução anual de home office:</h4>
+                        <div class="preview-value" id="home-office-deduction-preview">R$ 0,00</div>
+                        <p class="preview-note">Baseado no percentual da área do escritório sobre o total</p>
+                    </div>
                 </div>
 
                 <div class="form-actions">
                     <button class="btn-secondary" data-section="identification">Voltar</button>
-                    <button class="btn-primary" data-section="activity">Próximo: Atividade</button>
+                    <button class="btn-primary" data-section="activity">Próximo: Atividade MEI</button>
                 </div>
             </section>
 
             <section class="section" id="activity-section">
                 <div class="section-header">
-                    <h2>Atividade Econômica</h2>
-                    <p class="section-subtitle">Detalhes da atividade principal do MEI</p>
+                    <h2>Atividade Econômica do MEI</h2>
+                    <p class="section-subtitle">Detalhes da atividade principal e alíquotas</p>
                 </div>
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="cnae">CNAE Principal</label>
+                        <label for="cnae">CNAE Principal *</label>
                         <input type="text" id="cnae" class="form-input" placeholder="Código CNAE">
+                        <small class="hint">Ex: 62.01-5-01 para desenvolvimento de software</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="atividade">Tipo de Atividade *</label>
+                        <select id="atividade" class="form-input">
+                            <option value="">Selecione</option>
+                            <option value="comercio">Comércio</option>
+                            <option value="servico">Prestação de Serviços</option>
+                            <option value="industria">Indústria</option>
+                            <option value="misto">Misto (Comércio e Serviços)</option>
+                            <option value="transporte">Transporte</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="aliquota-das">Alíquota do DAS (%) *</label>
+                        <select id="aliquota-das" class="form-input">
+                            <option value="">Selecione</option>
+                            <option value="5">5% - Comércio e Indústria</option>
+                            <option value="6">6% - Serviços e Transporte</option>
+                            <option value="5.5">5,5% - Misto</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="descricao-atividade">Descrição da Atividade *</label>
-                        <textarea id="descricao-atividade" class="form-input" rows="3" placeholder="Descreva sua atividade principal"></textarea>
+                        <textarea id="descricao-atividade" class="form-input" rows="3" placeholder="Descreva detalhadamente sua atividade principal"></textarea>
                     </div>
                 </div>
 
-                <div class="info-card">
-                    <h4>📋 Regras do MEI 2026</h4>
-                    <div class="rules-grid">
-                        <div class="rule-item">
-                            <strong>Limite de Faturamento</strong>
-                            <p>R$ 81.000,00/ano</p>
-                        </div>
-                        <div class="rule-item">
-                            <strong>Alíquota DAS</strong>
-                            <p>5% a 6% (varia por atividade)</p>
-                        </div>
-                        <div class="rule-item">
-                            <strong>Isenção IRPJ</strong>
-                            <p>Total (como PJ)</p>
-                        </div>
-                        <div class="rule-item">
-                            <strong>IRPF</strong>
-                            <p>Declara se ultrapassar R$ 28.559,70/ano</p>
-                        </div>
+                <div class="rules-container">
+                    <div class="rule-card">
+                        <h4>📋 Regras do MEI 2026</h4>
+                        <ul>
+                            <li><strong>Limite de Faturamento:</strong> R$ 81.000,00/ano</li>
+                            <li><strong>Isenção IRPJ:</strong> Total (como Pessoa Jurídica)</li>
+                            <li><strong>DAS:</strong> Pago mensalmente (R$ 71,10 a R$ 85,32)</li>
+                            <li><strong>IRPF:</strong> Declaração obrigatória acima de R$ 28.559,70/ano</li>
+                            <li><strong>INSS:</strong> Incluso no DAS (aposentadoria por idade)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="rule-card">
+                        <h4>💡 Deduções Permitidas</h4>
+                        <ul>
+                            <li><strong>Home Office:</strong> Até 15% do aluguel/condomínio</li>
+                            <li><strong>Despesas Operacionais:</strong> 100% (com nota fiscal)</li>
+                            <li><strong>Equipamentos:</strong> Depreciação em 5 anos</li>
+                            <li><strong>Veículo:</strong> Proporcional ao uso profissional</li>
+                            <li><strong>Material:</strong> 100% quando comprovado</li>
+                        </ul>
                     </div>
                 </div>
 
                 <div class="form-actions">
                     <button class="btn-secondary" data-section="address">Voltar</button>
-                    <button class="btn-primary" data-section="revenue">Próximo: Receitas</button>
+                    <button class="btn-primary" data-section="mei-revenue">Próximo: Receitas MEI</button>
                 </div>
             </section>
 
-            <section class="section" id="revenue-section">
+            <section class="section" id="mei-revenue-section">
                 <div class="section-header">
-                    <h2>Receitas do Período</h2>
-                    <p class="section-subtitle">Todas as receitas do ano fiscal</p>
+                    <h2>Receitas do MEI</h2>
+                    <p class="section-subtitle">Faturamento anual da sua microempresa</p>
                 </div>
 
                 <div class="revenue-summary">
@@ -288,31 +348,39 @@
                         <h4>Média Mensal</h4>
                         <p class="summary-value" id="monthly-average">R$ 0,00</p>
                     </div>
+                    <div class="summary-card">
+                        <h4>DAS Anual Estimado</h4>
+                        <p class="summary-value" id="das-anual">R$ 0,00</p>
+                    </div>
                 </div>
 
                 <div class="dynamic-form">
-                    <h3>Adicionar Receita</h3>
+                    <h3>Adicionar Receita do MEI</h3>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="revenue-source">Fonte da Receita *</label>
-                            <input type="text" id="revenue-source" class="form-input" placeholder="Cliente, projeto, etc.">
+                            <label for="revenue-source">Cliente/Projeto *</label>
+                            <input type="text" id="revenue-source" class="form-input" placeholder="Nome do cliente ou projeto">
                         </div>
                         <div class="form-group">
                             <label for="revenue-value">Valor (R$) *</label>
                             <input type="number" id="revenue-value" class="form-input" step="0.01" min="0">
                         </div>
                         <div class="form-group">
-                            <label for="revenue-type">Tipo *</label>
+                            <label for="revenue-type">Tipo de Receita *</label>
                             <select id="revenue-type" class="form-input">
-                                <option value="servico">Serviço</option>
-                                <option value="comercio">Comércio</option>
-                                <option value="misto">Misto</option>
+                                <option value="servico">Serviço Prestado</option>
+                                <option value="venda">Venda de Produtos</option>
+                                <option value="projeto">Projeto/Contrato</option>
                                 <option value="outro">Outro</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="revenue-date">Data *</label>
+                            <label for="revenue-date">Data da Receita *</label>
                             <input type="date" id="revenue-date" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="revenue-nota">Nota Fiscal</label>
+                            <input type="text" id="revenue-nota" class="form-input" placeholder="Número da nota fiscal">
                         </div>
                     </div>
                     <button class="btn-primary" id="add-revenue">Adicionar Receita</button>
@@ -321,10 +389,11 @@
                 <div class="items-list" id="revenue-list">
                     <h3>Receitas Cadastradas</h3>
                     <div class="list-header">
-                        <span>Fonte</span>
+                        <span>Cliente/Projeto</span>
                         <span>Valor</span>
                         <span>Tipo</span>
                         <span>Data</span>
+                        <span>Nota Fiscal</span>
                         <span>Ações</span>
                     </div>
                     <div class="list-items" id="revenue-items">
@@ -334,14 +403,14 @@
 
                 <div class="form-actions">
                     <button class="btn-secondary" data-section="activity">Voltar</button>
-                    <button class="btn-primary" data-section="expenses">Próximo: Despesas</button>
+                    <button class="btn-primary" data-section="mei-expenses">Próximo: Despesas MEI</button>
                 </div>
             </section>
 
-            <section class="section" id="expenses-section">
+            <section class="section" id="mei-expenses-section">
                 <div class="section-header">
-                    <h2>Despesas do Período</h2>
-                    <p class="section-subtitle">Despesas operacionais e tributárias</p>
+                    <h2>Despesas do MEI</h2>
+                    <p class="section-subtitle">Custos operacionais e investimentos da empresa</p>
                 </div>
 
                 <div class="expenses-summary">
@@ -354,13 +423,17 @@
                         <p class="summary-value" id="expenses-by-category">-</p>
                     </div>
                     <div class="summary-card">
-                        <h4>Lucro Estimado</h4>
+                        <h4>Lucro Operacional</h4>
                         <p class="summary-value" id="estimated-profit">R$ 0,00</p>
+                    </div>
+                    <div class="summary-card">
+                        <h4>% Sobre Receita</h4>
+                        <p class="summary-value" id="expenses-percentage">0%</p>
                     </div>
                 </div>
 
                 <div class="dynamic-form">
-                    <h3>Adicionar Despesa</h3>
+                    <h3>Adicionar Despesa do MEI</h3>
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="expense-description">Descrição *</label>
@@ -373,10 +446,12 @@
                         <div class="form-group">
                             <label for="expense-category">Categoria *</label>
                             <select id="expense-category" class="form-input">
-                                <option value="operacional">Operacional</option>
-                                <option value="transporte">Transporte</option>
-                                <option value="equipamentos">Equipamentos</option>
-                                <option value="tributos">Tributos</option>
+                                <option value="material">Material/Consumo</option>
+                                <option value="servico">Serviços Terceirizados</option>
+                                <option value="equipamento">Equipamentos</option>
+                                <option value="veiculo">Veículo/Transporte</option>
+                                <option value="homeoffice">Home Office</option>
+                                <option value="tributos">Tributos/Taxas</option>
                                 <option value="outros">Outros</option>
                             </select>
                         </div>
@@ -385,8 +460,17 @@
                             <input type="date" id="expense-date" class="form-input">
                         </div>
                         <div class="form-group">
-                            <label for="expense-note">Nota/Fatura</label>
-                            <input type="text" id="expense-note" class="form-input" placeholder="Número da nota">
+                            <label for="expense-nota">Nota Fiscal *</label>
+                            <input type="text" id="expense-nota" class="form-input" placeholder="Número da nota fiscal">
+                        </div>
+                        <div class="form-group">
+                            <label for="expense-depreciacao">Depreciação (anos)</label>
+                            <select id="expense-depreciacao" class="form-input">
+                                <option value="0">Não depreciável</option>
+                                <option value="5">5 anos (equipamentos)</option>
+                                <option value="10">10 anos (móveis)</option>
+                                <option value="20">20 anos (imóveis)</option>
+                            </select>
                         </div>
                     </div>
                     <button class="btn-primary" id="add-expense">Adicionar Despesa</button>
@@ -399,6 +483,8 @@
                         <span>Valor</span>
                         <span>Categoria</span>
                         <span>Data</span>
+                        <span>Nota Fiscal</span>
+                        <span>Depreciação</span>
                         <span>Ações</span>
                     </div>
                     <div class="list-items" id="expense-items">
@@ -406,120 +492,367 @@
                     </div>
                 </div>
 
+                <div class="depreciation-info">
+                    <h4>📊 Depreciação de Bens</h4>
+                    <p>Equipamentos e bens duráveis podem ser depreciados ao longo do tempo. Isso reduz seu lucro tributável ano a ano.</p>
+                    <ul>
+                        <li><strong>Computadores, móveis:</strong> 5 anos (20% ao ano)</li>
+                        <li><strong>Veículos:</strong> 5 anos (20% ao ano)</li>
+                        <li><strong>Máquinas industriais:</strong> 10 anos (10% ao ano)</li>
+                        <li><strong>Imóveis:</strong> 25 anos (4% ao ano)</li>
+                    </ul>
+                </div>
+
                 <div class="form-actions">
-                    <button class="btn-secondary" data-section="revenue">Voltar</button>
-                    <button class="btn-primary" data-section="assets">Próximo: Bens</button>
+                    <button class="btn-secondary" data-section="mei-revenue">Voltar</button>
+                    <button class="btn-primary" data-section="other-income">Próximo: Outras Rendas</button>
                 </div>
             </section>
 
-            <section class="section" id="assets-section">
+            <section class="section" id="other-income-section">
                 <div class="section-header">
-                    <h2>Bens e Patrimônio</h2>
-                    <p class="section-subtitle">Bens de uso pessoal e profissional</p>
+                    <h2>Outras Fontes de Renda</h2>
+                    <p class="section-subtitle">Rendimentos como Pessoa Física além do MEI</p>
                 </div>
 
-                <div class="assets-summary">
+                <div class="income-summary">
                     <div class="summary-card">
-                        <h4>Total em Bens</h4>
-                        <p class="summary-value" id="total-assets">R$ 0,00</p>
+                        <h4>Salários/Pró-labore</h4>
+                        <p class="summary-value" id="total-salarios">R$ 0,00</p>
                     </div>
                     <div class="summary-card">
-                        <h4>Bens Profissionais</h4>
-                        <p class="summary-value" id="professional-assets">0 itens</p>
+                        <h4>Aluguéis</h4>
+                        <p class="summary-value" id="total-alugueis">R$ 0,00</p>
                     </div>
                     <div class="summary-card">
-                        <h4>Bens Pessoais</h4>
-                        <p class="summary-value" id="personal-assets">0 itens</p>
+                        <h4>Investimentos</h4>
+                        <p class="summary-value" id="total-investimentos">R$ 0,00</p>
+                    </div>
+                    <div class="summary-card">
+                        <h4>Outras Rendas</h4>
+                        <p class="summary-value" id="total-outras-rendas">R$ 0,00</p>
                     </div>
                 </div>
 
-                <div class="dynamic-form">
-                    <h3>Adicionar Bem</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="asset-name">Nome do Bem *</label>
-                            <input type="text" id="asset-name" class="form-input" placeholder="Ex: Computador, Veículo, etc.">
+                <div class="income-categories">
+                    <div class="income-category">
+                        <h3>💼 Salário/Pró-labore</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="salario-mensal">Salário Mensal (R$)</label>
+                                <input type="number" id="salario-mensal" class="form-input" placeholder="0,00" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="salario-meses">Número de meses</label>
+                                <input type="number" id="salario-meses" class="form-input" value="13" min="1" max="13">
+                                <small class="hint">Inclui 13º salário</small>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="asset-value">Valor Estimado (R$) *</label>
-                            <input type="number" id="asset-value" class="form-input" step="0.01" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="asset-date">Data de Aquisição *</label>
-                            <input type="date" id="asset-date" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label for="asset-use">Uso *</label>
-                            <select id="asset-use" class="form-input">
-                                <option value="profissional">Profissional</option>
-                                <option value="pessoal">Pessoal</option>
-                                <option value="misto">Misto</option>
-                            </select>
+                        <div class="calculated-value">
+                            <strong>Total anual:</strong> <span id="salario-anual">R$ 0,00</span>
                         </div>
                     </div>
-                    <button class="btn-primary" id="add-asset">Adicionar Bem</button>
-                </div>
 
-                <div class="items-list" id="assets-list">
-                    <h3>Bens Cadastrados</h3>
-                    <div class="list-header">
-                        <span>Nome</span>
-                        <span>Valor</span>
-                        <span>Uso</span>
-                        <span>Aquisição</span>
-                        <span>Ações</span>
+                    <div class="income-category">
+                        <h3>🏠 Renda de Aluguéis</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="aluguel-mensal-pf">Aluguel Mensal Recebido (R$)</label>
+                                <input type="number" id="aluguel-mensal-pf" class="form-input" placeholder="0,00" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="aluguel-meses">Número de meses</label>
+                                <input type="number" id="aluguel-meses" class="form-input" value="12" min="1" max="12">
+                            </div>
+                        </div>
+                        <div class="calculated-value">
+                            <strong>Total anual:</strong> <span id="aluguel-anual">R$ 0,00</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="despesas-aluguel">Despesas com imóvel alugado (R$/ano)</label>
+                            <input type="number" id="despesas-aluguel" class="form-input" placeholder="0,00" step="0.01">
+                            <small class="hint">IPTU, condomínio, manutenção (dedutíveis)</small>
+                        </div>
                     </div>
-                    <div class="list-items" id="asset-items">
-                        <div class="empty-state">Nenhum bem cadastrado ainda.</div>
+
+                    <div class="income-category">
+                        <h3>📈 Rendimentos de Investimentos</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="dividendos">Dividendos (R$/ano)</label>
+                                <input type="number" id="dividendos" class="form-input" placeholder="0,00" step="0.01">
+                                <small class="hint">Isentos de IR</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="juros-capital">Juros sobre capital próprio (R$/ano)</label>
+                                <input type="number" id="juros-capital" class="form-input" placeholder="0,00" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="rendimentos-acoes">Rendimentos de ações (R$/ano)</label>
+                                <input type="number" id="rendimentos-acoes" class="form-input" placeholder="0,00" step="0.01">
+                                <small class="hint">Isentos até R$ 20.000/mês</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="rendimentos-fiis">Rendimentos de FIIs (R$/ano)</label>
+                                <input type="number" id="rendimentos-fiis" class="form-input" placeholder="0,00" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="income-category">
+                        <h3>💵 Outras Rendas</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="pensao-recebida">Pensão Alimentícia Recebida (R$/ano)</label>
+                                <input type="number" id="pensao-recebida" class="form-input" placeholder="0,00" step="0.01">
+                                <small class="hint">Isenta de IR</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="doacoes-recebidas">Doações/Heranças (R$/ano)</label>
+                                <input type="number" id="doacoes-recebidas" class="form-input" placeholder="0,00" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="outros-rendimentos">Outros Rendimentos (R$/ano)</label>
+                                <input type="number" id="outros-rendimentos" class="form-input" placeholder="0,00" step="0.01">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="form-actions">
-                    <button class="btn-secondary" data-section="expenses">Voltar</button>
+                    <button class="btn-secondary" data-section="mei-expenses">Voltar</button>
+                    <button class="btn-primary" data-section="deductions">Próximo: Deduções IRPF</button>
+                </div>
+            </section>
+
+            <section class="section" id="deductions-section">
+                <div class="section-header">
+                    <h2>Deduções do IRPF</h2>
+                    <p class="section-subtitle">Tudo que pode ser abatido do imposto devido</p>
+                </div>
+
+                <div class="deductions-container">
+                    <div class="deduction-category">
+                        <h3>👨‍👩‍👧‍👦 Dependentes</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="dependentes">Número de dependentes</label>
+                                <input type="number" id="dependentes" class="form-input" value="0" min="0" max="10">
+                                <small class="hint">R$ 2.275,08 por dependente</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="dependentes-menores">Dependentes menores de 21 anos</label>
+                                <input type="number" id="dependentes-menores" class="form-input" value="0" min="0" max="10">
+                            </div>
+                            <div class="form-group">
+                                <label for="dependentes-universitarios">Dependentes universitários</label>
+                                <input type="number" id="dependentes-universitarios" class="form-input" value="0" min="0" max="10">
+                            </div>
+                        </div>
+                        <div class="calculated-value">
+                            <strong>Dedução total:</strong> <span id="deducao-dependentes">R$ 0,00</span>
+                        </div>
+                    </div>
+
+                    <div class="deduction-category">
+                        <h3>🏥 Gastos com Saúde</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="gastos-medicos">Médicos, dentistas, exames (R$/ano)</label>
+                                <input type="number" id="gastos-medicos" class="form-input" placeholder="0,00" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="gastos-medicamentos">Medicamentos (R$/ano)</label>
+                                <input type="number" id="gastos-medicamentos" class="form-input" placeholder="0,00" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="gastos-plano">Plano de saúde (R$/ano)</label>
+                                <input type="number" id="gastos-plano" class="form-input" placeholder="0,00" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="gastos-orteses">Órteses e próteses (R$/ano)</label>
+                                <input type="number" id="gastos-orteses" class="form-input" placeholder="0,00" step="0.01">
+                            </div>
+                        </div>
+                        <div class="calculated-value">
+                            <strong>Dedução total:</strong> <span id="deducao-saude">R$ 0,00</span>
+                        </div>
+                    </div>
+
+                    <div class="deduction-category">
+                        <h3>🎓 Gastos com Educação</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="gastos-faculdade">Faculdade/Cursos (R$/ano)</label>
+                                <input type="number" id="gastos-faculdade" class="form-input" placeholder="0,00" step="0.01">
+                                <small class="hint">R$ 3.561,50 por pessoa</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="gastos-escola">Escola Básica (R$/ano)</label>
+                                <input type="number" id="gastos-escola" class="form-input" placeholder="0,00" step="0.01">
+                                <small class="hint">R$ 3.561,50 por pessoa</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="gastos-cursos">Cursos Livres (R$/ano)</label>
+                                <input type="number" id="gastos-cursos" class="form-input" placeholder="0,00" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="gastos-material">Material escolar (R$/ano)</label>
+                                <input type="number" id="gastos-material" class="form-input" placeholder="0,00" step="0.01">
+                            </div>
+                        </div>
+                        <div class="calculated-value">
+                            <strong>Dedução total:</strong> <span id="deducao-educacao">R$ 0,00</span>
+                        </div>
+                    </div>
+
+                    <div class="deduction-category">
+                        <h3>🏦 Previdência e Doações</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="previdencia-oficial">Previdência Oficial (INSS) (R$/ano)</label>
+                                <input type="number" id="previdencia-oficial" class="form-input" placeholder="0,00" step="0.01">
+                                <small class="hint">Incluso no DAS do MEI</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="previdencia-privada">Previdência Privada (PGBL) (R$/ano)</label>
+                                <input type="number" id="previdencia-privada" class="form-input" placeholder="0,00" step="0.01">
+                                <small class="hint">Até 12% da renda tributável</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="doacoes-dedutiveis">Doações Dedutíveis (R$/ano)</label>
+                                <input type="number" id="doacoes-dedutiveis" class="form-input" placeholder="0,00" step="0.01">
+                                <small class="hint">Fundos da criança, esporte, cultural</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="pensao-alimenticia">Pensão Alimentícia Paga (R$/ano)</label>
+                                <input type="number" id="pensao-alimenticia" class="form-input" placeholder="0,00" step="0.01">
+                                <small class="hint">Dedutível integralmente</small>
+                            </div>
+                        </div>
+                        <div class="calculated-value">
+                            <strong>Dedução total:</strong> <span id="deducao-previdencia">R$ 0,00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="deductions-summary">
+                    <h3>📊 Resumo das Deduções</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span class="summary-label">Dependentes:</span>
+                            <span class="summary-value" id="resumo-dependentes">R$ 0,00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Saúde:</span>
+                            <span class="summary-value" id="resumo-saude">R$ 0,00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Educação:</span>
+                            <span class="summary-value" id="resumo-educacao">R$ 0,00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Previdência/Doações:</span>
+                            <span class="summary-value" id="resumo-previdencia">R$ 0,00</span>
+                        </div>
+                        <div class="summary-item total">
+                            <span class="summary-label">Total Deduções:</span>
+                            <span class="summary-value" id="resumo-total-deducoes">R$ 0,00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn-secondary" data-section="other-income">Voltar</button>
                     <button class="btn-primary" data-section="simulation">Próximo: Simulação IR</button>
                 </div>
             </section>
 
             <section class="section" id="simulation-section">
                 <div class="section-header">
-                    <h2>Simulação de Imposto de Renda</h2>
-                    <p class="section-subtitle">Cálculo de IRPF para Microempreendedor Individual</p>
-                </div>
-
-                <div class="simulation-controls">
-                    <button class="btn-secondary" id="run-simulation">🔄 Recalcular Simulação</button>
-                    <button class="btn-secondary" id="what-if-btn">🎯 Cenário "E Se"</button>
+                    <h2>Simulação Completa do IRPF</h2>
+                    <p class="section-subtitle">Cálculo detalhado do Imposto de Renda 2026</p>
+                    <div class="simulation-controls">
+                        <button class="btn-primary" id="run-simulation">🔄 Calcular Imposto</button>
+                        <button class="btn-secondary" id="what-if-btn">🎯 Cenário "E Se"</button>
+                    </div>
                 </div>
 
                 <div class="simulation-results">
                     <div class="simulation-card highlight">
-                        <h3>📊 Resumo Fiscal</h3>
+                        <h3>📊 Renda Total do Contribuinte</h3>
                         <div class="simulation-grid">
                             <div class="sim-item">
-                                <span class="sim-label">Receita Bruta Anual:</span>
-                                <span class="sim-value" id="sim-revenue">R$ 0,00</span>
+                                <span class="sim-label">Receitas do MEI:</span>
+                                <span class="sim-value" id="sim-receitas-mei">R$ 0,00</span>
                             </div>
                             <div class="sim-item">
-                                <span class="sim-label">Despesas Dedutíveis:</span>
-                                <span class="sim-value" id="sim-expenses">R$ 0,00</span>
+                                <span class="sim-label">(-) Despesas MEI:</span>
+                                <span class="sim-value" id="sim-despesas-mei">R$ 0,00</span>
                             </div>
                             <div class="sim-item">
-                                <span class="sim-label">Renda Tributável:</span>
-                                <span class="sim-value" id="sim-taxable-income">R$ 0,00</span>
+                                <span class="sim-label">(=) Lucro MEI:</span>
+                                <span class="sim-value" id="sim-lucro-mei">R$ 0,00</span>
                             </div>
                             <div class="sim-item">
-                                <span class="sim-label">Dedução Padrão:</span>
-                                <span class="sim-value" id="sim-standard-deduction">R$ 2.275,08</span>
+                                <span class="sim-label">(+) Outras Rendas PF:</span>
+                                <span class="sim-value" id="sim-outras-rendas">R$ 0,00</span>
                             </div>
                             <div class="sim-item total">
-                                <span class="sim-label">Base de Cálculo IRPF:</span>
-                                <span class="sim-value" id="sim-tax-base">R$ 0,00</span>
+                                <span class="sim-label">(=) Renda Bruta Total:</span>
+                                <span class="sim-value" id="sim-renda-bruta">R$ 0,00</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="simulation-card">
-                        <h3>📈 Faixas do IRPF 2026</h3>
+                        <h3>🧾 Deduções Legais</h3>
+                        <div class="simulation-grid">
+                            <div class="sim-item">
+                                <span class="sim-label">Despesas Home Office:</span>
+                                <span class="sim-value" id="sim-home-office">R$ 0,00</span>
+                            </div>
+                            <div class="sim-item">
+                                <span class="sim-label">Dependentes:</span>
+                                <span class="sim-value" id="sim-dependentes">R$ 0,00</span>
+                            </div>
+                            <div class="sim-item">
+                                <span class="sim-label">Saúde:</span>
+                                <span class="sim-value" id="sim-saude">R$ 0,00</span>
+                            </div>
+                            <div class="sim-item">
+                                <span class="sim-label">Educação:</span>
+                                <span class="sim-value" id="sim-educacao">R$ 0,00</span>
+                            </div>
+                            <div class="sim-item">
+                                <span class="sim-label">Previdência/Doações:</span>
+                                <span class="sim-value" id="sim-previdencia">R$ 0,00</span>
+                            </div>
+                            <div class="sim-item total">
+                                <span class="sim-label">(=) Total Deduções:</span>
+                                <span class="sim-value" id="sim-total-deducoes">R$ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="simulation-card">
+                        <h3>📈 Cálculo do Imposto</h3>
+                        <div class="simulation-grid">
+                            <div class="sim-item">
+                                <span class="sim-label">Renda Bruta Total:</span>
+                                <span class="sim-value" id="sim-renda-bruta-2">R$ 0,00</span>
+                            </div>
+                            <div class="sim-item">
+                                <span class="sim-label">(-) Total Deduções:</span>
+                                <span class="sim-value" id="sim-total-deducoes-2">R$ 0,00</span>
+                            </div>
+                            <div class="sim-item total">
+                                <span class="sim-label">(=) Base de Cálculo:</span>
+                                <span class="sim-value" id="sim-base-calculo">R$ 0,00</span>
+                            </div>
+                        </div>
+                        
+                        <h4>Faixas do IRPF 2026</h4>
                         <div class="tax-brackets">
                             <div class="bracket">
                                 <span class="bracket-range">Até R$ 22.847,76</span>
@@ -550,65 +883,72 @@
                     </div>
 
                     <div class="simulation-card result">
-                        <h3>💰 Resultado da Simulação</h3>
+                        <h3>💰 Resultado Final</h3>
                         <div class="result-grid">
                             <div class="result-item">
                                 <span class="result-label">Imposto Devido:</span>
-                                <span class="result-value" id="sim-tax-due">R$ 0,00</span>
+                                <span class="result-value" id="sim-imposto-devido">R$ 0,00</span>
                             </div>
                             <div class="result-item">
                                 <span class="result-label">Alíquota Efetiva:</span>
-                                <span class="result-value" id="sim-effective-rate">0%</span>
+                                <span class="result-value" id="sim-aliquota-efetiva">0%</span>
                             </div>
                             <div class="result-item">
                                 <span class="result-label">Situação Fiscal:</span>
-                                <span class="result-value" id="sim-tax-status">Não tributável</span>
+                                <span class="result-value" id="sim-situacao-fiscal">Não tributável</span>
                             </div>
                             <div class="result-item">
                                 <span class="result-label">Declaração IRPF:</span>
-                                <span class="result-value" id="sim-declaration">Não obrigatória</span>
+                                <span class="result-value" id="sim-declaracao-obrigatoria">Não obrigatória</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="what-if-scenario" id="what-if-panel" style="display: none;">
-                    <h3>🎯 Cenário "E Se"</h3>
+                    <h3>🎯 Cenário "E Se" - Teste Alterações</h3>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="what-if-revenue">Receita Adicional (R$)</label>
-                            <input type="number" id="what-if-revenue" class="form-input" value="0" step="1000">
+                            <label for="what-if-receita-adicional">Receita Adicional MEI (R$/ano)</label>
+                            <input type="number" id="what-if-receita-adicional" class="form-input" value="0" step="1000">
                         </div>
                         <div class="form-group">
-                            <label for="what-if-expenses">Despesas Adicionais (R$)</label>
-                            <input type="number" id="what-if-expenses" class="form-input" value="0" step="1000">
+                            <label for="what-if-despesa-adicional">Despesa Adicional MEI (R$/ano)</label>
+                            <input type="number" id="what-if-despesa-adicional" class="form-input" value="0" step="1000">
+                        </div>
+                        <div class="form-group">
+                            <label for="what-if-dependentes">Dependentes Adicionais</label>
+                            <input type="number" id="what-if-dependentes" class="form-input" value="0" min="0" max="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="what-if-previdencia">Previdência Adicional (R$/ano)</label>
+                            <input type="number" id="what-if-previdencia" class="form-input" value="0" step="1000">
                         </div>
                     </div>
-                    <button class="btn-primary" id="apply-what-if">Aplicar Cenário</button>
-                    <button class="btn-secondary" id="reset-what-if">Voltar ao Real</button>
+                    <div class="what-if-controls">
+                        <button class="btn-primary" id="apply-what-if">Aplicar Cenário</button>
+                        <button class="btn-secondary" id="reset-what-if">Voltar ao Real</button>
+                    </div>
                 </div>
 
-                <div class="simulation-notes">
-                    <h4>📝 Notas da Simulação</h4>
-                    <ul>
-                        <li>O MEI é <strong>isento de IRPJ</strong> (Imposto de Renda Pessoa Jurídica)</li>
-                        <li>O IRPF é devido apenas sobre <strong>renda tributável acima de R$ 28.559,70/ano</strong></li>
-                        <li>Dedução padrão anual de R$ 2.275,08 já aplicada</li>
-                        <li>Considere deduções com dependentes, saúde, educação, etc.</li>
-                        <li>Esta simulação <strong>não substitui</strong> consulta com contador</li>
-                    </ul>
+                <div class="simulation-details">
+                    <h3>📋 Detalhes do Cálculo</h3>
+                    <div class="details-content" id="simulation-details-content">
+                        <!-- Detalhes serão preenchidos pelo JavaScript -->
+                    </div>
                 </div>
 
                 <div class="form-actions">
-                    <button class="btn-secondary" data-section="assets">Voltar</button>
+                    <button class="btn-secondary" data-section="deductions">Voltar</button>
                     <button class="btn-primary" data-section="validation">Próximo: Validação</button>
                 </div>
             </section>
 
             <section class="section" id="validation-section">
+                <!-- Mantido igual ao anterior -->
                 <div class="section-header">
-                    <h2>Validação Fiscal Inteligente</h2>
-                    <p class="section-subtitle">Verificação de conformidade e alertas</p>
+                    <h2>Validação Fiscal Completa</h2>
+                    <p class="section-subtitle">Verificação de conformidade e alertas fiscais</p>
                 </div>
 
                 <div class="validation-container">
@@ -630,21 +970,21 @@
                         </div>
                     </div>
 
-                    <div class="validation-card" id="validation-address">
-                        <div class="validation-icon">📍</div>
-                        <div class="validation-content">
-                            <h4>Endereços</h4>
-                            <p class="validation-status">Verificando...</p>
-                            <p class="validation-detail">Separação PF/PJ</p>
-                        </div>
-                    </div>
-
                     <div class="validation-card" id="validation-documents">
                         <div class="validation-icon">📋</div>
                         <div class="validation-content">
                             <h4>Documentos</h4>
                             <p class="validation-status">Verificando...</p>
                             <p class="validation-detail">CPF e CNPJ válidos</p>
+                        </div>
+                    </div>
+
+                    <div class="validation-card" id="validation-deductions">
+                        <div class="validation-icon">🧾</div>
+                        <div class="validation-content">
+                            <h4>Deduções</h4>
+                            <p class="validation-status">Verificando...</p>
+                            <p class="validation-detail">Limites legais aplicados</p>
                         </div>
                     </div>
                 </div>
@@ -657,7 +997,7 @@
                 </div>
 
                 <div class="validation-alerts">
-                    <h3>⚠️ Alertas Fiscais</h3>
+                    <h3>⚠️ Alertas Fiscais Importantes</h3>
                     <div class="alerts-list" id="validation-alerts-list">
                         <!-- Alertas serão inseridos aqui -->
                     </div>
@@ -670,9 +1010,10 @@
             </section>
 
             <section class="section" id="report-section">
+                <!-- Mantido igual ao anterior com melhorias -->
                 <div class="section-header">
-                    <h2>Relatório Fiscal Completo</h2>
-                    <p class="section-subtitle">Documento profissional para consulta contábil</p>
+                    <h2>Relatório Fiscal Profissional</h2>
+                    <p class="section-subtitle">Documento completo para consulta com contador</p>
                     <div class="report-controls">
                         <button class="btn-secondary" onclick="window.print()" id="print-btn">
                             🖨️ Imprimir/PDF
@@ -696,9 +1037,10 @@
             </section>
 
             <section class="section" id="export-section">
+                <!-- Mantido igual ao anterior -->
                 <div class="section-header">
-                    <h2>Exportação de Dados</h2>
-                    <p class="section-subtitle">Finalize e exporte seu relatório fiscal</p>
+                    <h2>Exportação de Dados Fiscais</h2>
+                    <p class="section-subtitle">Finalize e exporte seu relatório completo</p>
                 </div>
 
                 <div class="export-options">
@@ -748,7 +1090,7 @@
                     <p>CEP: 05.424-150 | Tel: (71) 98260-7352</p>
                 </div>
                 <div class="footer-legal">
-                    <p>© 2026 Assistente Fiscal MEI - Simulador Completo de Impostos</p>
+                    <p>© 2026 Simulador IRPF MEI - Sistema Completo de Cálculo Fiscal</p>
                     <p class="footer-note">Sistema 100% offline. Dados armazenados apenas localmente.</p>
                     <p class="footer-disclaimer">Simulador fiscal para fins educacionais. Consulte um contador.</p>
                 </div>
